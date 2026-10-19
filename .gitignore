@@ -1,0 +1,6 @@
+.DS_Store
+.env
+*.env.local
+# gws / Google OAuth credentials must never be committed
+config/**/credentials*.json
+config/**/token*.json
