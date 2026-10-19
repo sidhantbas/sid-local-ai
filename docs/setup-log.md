@@ -33,3 +33,18 @@ git add -A && git commit -m "Initial skeleton"
 git remote add origin https://github.com/sidhantbas/sid-local-ai.git
 git push -u origin main
 ```
+
+## 3. Open WebUI
+
+Compose file: `docker/docker-compose.yml`.
+
+```sh
+docker compose -f docker/docker-compose.yml config -q   # validate
+docker compose -f docker/docker-compose.yml pull        # ~5.8 GB, ~2 min
+./scripts/start-open-webui.sh                           # up -d + wait for /health
+
+# Verify
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/   # 200
+docker exec open-webui getent hosts host.docker.internal          # 192.168.5.2
+docker stats --no-stream                                          # ~1.1 GiB / 1.9 GiB
+```

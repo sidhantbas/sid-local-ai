@@ -1,0 +1,20 @@
+name: sid-local-ai
+
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"          # http://localhost:3000
+    volumes:
+      - open-webui:/app/backend/data
+    environment:
+      # No Ollama here; the model is served by Unsloth Studio on the host
+      # (added as an OpenAI-compatible connection once its port is known).
+      - ENABLE_OLLAMA_API=false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  open-webui:
