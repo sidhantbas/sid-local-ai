@@ -20,3 +20,16 @@ colima list                 # default  Running  aarch64  4  2GiB  100GiB  docker
 docker context show         # colima
 docker pull alpine          # confirms Docker can pull images through Colima
 ```
+
+## 2. Repository
+
+Created `sidhantbas/sid-local-ai` (private, empty) manually at github.com/new.
+
+```sh
+mkdir -p ~/sid-local-ai && cd ~/sid-local-ai
+git init -b main
+# ... add files ...
+git add -A && git commit -m "Initial skeleton"
+git remote add origin https://github.com/sidhantbas/sid-local-ai.git
+git push -u origin main
+```
