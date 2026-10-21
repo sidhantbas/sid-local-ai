@@ -35,7 +35,7 @@ config/     non-secret configuration notes
 - [ ] Open WebUI connected to the local model (Unsloth port)
 - [ ] Hermes Agent (docker compose)
 - [x] uv + bun installed locally
-- [ ] gws CLI: 3 profiles (one per Gmail account), tested with Gmail / Calendar / Tasks
+- [x] gws CLI: 3 profiles (one per Gmail account), tested with Gmail / Calendar / Tasks
 - [x] HyperFrames skills installed via bun
 - [ ] AGENTS.md copied from the original
 - [ ] Start/stop scripts for every component

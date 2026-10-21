@@ -102,3 +102,44 @@ Installed (7): `hyperframes`, `hyperframes-cli`, `hyperframes-registry`,
 `media-use` (core), plus `figma`, `remotion-to-hyperframes`, `slideshow`.
 
 Update later with: `bunx skills@latest update -g`
+
+## 7. gws CLI (Google Workspace), 3 profiles
+
+```sh
+brew install googleworkspace-cli     # gws 0.22.5 (NOT `brew install gws`, an unrelated tool)
+```
+
+gws 0.22.5 has no `--account` flag, so each account gets its own config dir via
+`GOOGLE_WORKSPACE_CLI_CONFIG_DIR`, wrapped by `scripts/gws.sh`:
+
+| Profile           | Account                    | Config dir                              |
+|-------------------|----------------------------|-----------------------------------------|
+| `sidhantbastola7` | sidhantbastola7@gmail.com  | `~/.config/gws/profiles/sidhantbastola7` |
+| `sibastola6ucl`   | sibastola6ucl@gmail.com    | `~/.config/gws/profiles/sibastola6ucl`   |
+| `disisidstudio`   | disisidstudio@gmail.com    | `~/.config/gws/profiles/disisidstudio`   |
+
+### Google Cloud setup (manual, in the console, as sidhantbastola7)
+
+1. Project `sid-local-ai`; enable Gmail API, Google Calendar API, Google Tasks API.
+2. OAuth consent screen: External, Testing mode, all 3 accounts added as **test users**
+   (without this, sign-in fails with `Error 403: access_denied`).
+3. OAuth client: type **Desktop app**; JSON downloaded and copied to each profile:
+   ```sh
+   install -m 600 ~/Downloads/client_secret_*.json ~/.config/gws/profiles/<profile>/client_secret.json
+   ```
+4. IAM: grant **Service Usage Consumer** on `sid-local-ai` to sibastola6ucl and
+   disisidstudio. Without it, Tasks calls from non-owner accounts fail
+   intermittently with 403 "Caller does not have required permission to use project".
+
+Testing-mode sign-ins expire after 7 days; publishing the app (after completing the
+Branding page) avoids that.
+
+### Sign in and test
+
+```sh
+./scripts/gws.sh <profile> auth login -s gmail,calendar,tasks   # opens Google sign-in
+./scripts/gws.sh <profile> auth status                          # shows linked account
+./scripts/test-gws.sh                  # Gmail +triage, Calendar +agenda, Tasks tasklists list
+```
+
+Result: all 3 profiles pass Gmail, Calendar and Tasks.
