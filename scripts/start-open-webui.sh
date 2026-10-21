@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 ./scripts/start-colima.sh
-docker compose -f docker/docker-compose.yml up -d open-webui
+docker compose --env-file .env -f docker/docker-compose.yml up -d open-webui
 
 echo "Waiting for Open WebUI to become healthy..."
 for _ in $(seq 1 60); do

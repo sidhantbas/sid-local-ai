@@ -11,11 +11,20 @@ Every command used to set this machine up is recorded in
 ## Quick start
 
 ```sh
+./scripts/start-unsloth.sh      # start Unsloth Studio + Qwen3.8-27B -> :8890 (~22 GB RAM)
 ./scripts/start-colima.sh       # start the Docker runtime (2 GB VM)
 ./scripts/start-open-webui.sh   # start Open WebUI -> http://localhost:3000
 ./scripts/status.sh             # show what's running
 ./scripts/stop-open-webui.sh    # stop Open WebUI (data is kept)
 ./scripts/stop-colima.sh        # stop the Docker runtime
+./scripts/stop-unsloth.sh       # stop Unsloth Studio (frees the model's memory)
+```
+
+Google Workspace (one profile per Gmail account):
+
+```sh
+./scripts/gws.sh <profile> <gws args...>   # e.g. ./scripts/gws.sh sidhantbastola7 gmail +triage
+./scripts/test-gws.sh                      # Gmail / Calendar / Tasks check for all profiles
 ```
 
 ## Layout
@@ -31,8 +40,8 @@ config/     non-secret configuration notes
 
 - [x] Colima Docker runtime, 2 GB RAM
 - [x] Open WebUI in Docker
-- [ ] Unsloth Studio + `qwen3.8-27b-q4-k-xl`
-- [ ] Open WebUI connected to the local model (Unsloth port)
+- [x] Unsloth Studio + `qwen3.8-27b-q4-k-xl`
+- [x] Open WebUI connected to the local model (Unsloth port 8890)
 - [ ] Hermes Agent (docker compose)
 - [x] uv + bun installed locally
 - [x] gws CLI: 3 profiles (one per Gmail account), tested with Gmail / Calendar / Tasks

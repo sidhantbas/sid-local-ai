@@ -9,9 +9,13 @@ services:
     volumes:
       - open-webui:/app/backend/data
     environment:
-      # No Ollama here; the model is served by Unsloth Studio on the host
-      # (added as an OpenAI-compatible connection once its port is known).
+      # No Ollama here; the model is served by Unsloth Studio on the host as an
+      # OpenAI-compatible API. Values come from ../.env (see scripts/start-open-webui.sh).
+      # Open WebUI only reads these on first start; afterwards its saved settings win.
       - ENABLE_OLLAMA_API=false
+      - ENABLE_OPENAI_API=true
+      - OPENAI_API_BASE_URL=http://host.docker.internal:${UNSLOTH_PORT:-8890}/v1
+      - OPENAI_API_KEY=${UNSLOTH_API_KEY:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped

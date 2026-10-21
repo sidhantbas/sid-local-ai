@@ -143,3 +143,27 @@ Branding page) avoids that.
 ```
 
 Result: all 3 profiles pass Gmail, Calendar and Tasks.
+
+## 8. Unsloth Studio running + Open WebUI connected
+
+```sh
+./scripts/start-unsloth.sh       # unsloth studio run --model unsloth/Qwen3.8-27B-GGUF
+                                 #   --gguf-variant UD-Q4_K_XL --max-seq-length 32768
+                                 #   -p 8890 --api-key-name open-webui ...
+# Prints the API key once; saved (not committed) to .env:
+#   UNSLOTH_PORT=8890
+#   UNSLOTH_API_KEY=sk-unsloth-...
+
+curl http://127.0.0.1:8890/v1/models -H "Authorization: Bearer $UNSLOTH_API_KEY"
+```
+
+Open WebUI's saved connection still pointed at api.openai.com, so with the container
+stopped and its data dir backed up (`docker cp open-webui:/app/backend/data/. <backup>`,
+including `webui.db-wal`), the `openai.api_base_urls` / `openai.api_keys` rows in
+`webui.db` were set to `http://host.docker.internal:8890/v1` and the Unsloth key.
+On a new machine the compose env vars do this instead. Alternatively, set it in the UI:
+Admin Panel → Settings → Connections → OpenAI API.
+
+Verified from inside the container with the saved settings: Qwen listed, and
+a chat returned "open webui can reach qwen". `start-unsloth.sh` / `stop-unsloth.sh`
+tested; the API key stays the same across restarts.

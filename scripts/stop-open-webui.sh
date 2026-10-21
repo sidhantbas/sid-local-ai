@@ -3,4 +3,4 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-docker compose -f docker/docker-compose.yml stop open-webui
+docker compose --env-file .env -f docker/docker-compose.yml stop open-webui

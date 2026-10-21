@@ -4,3 +4,4 @@
 # gws / Google OAuth credentials must never be committed
 config/**/credentials*.json
 config/**/token*.json
+logs/
