@@ -167,3 +167,41 @@ Admin Panel → Settings → Connections → OpenAI API.
 Verified from inside the container with the saved settings: Qwen listed, and
 a chat returned "open webui can reach qwen". `start-unsloth.sh` / `stop-unsloth.sh`
 tested; the API key stays the same across restarts.
+
+## 9. Colima raised to 4 GB
+
+Open WebUI alone used ~1.1 of the 2 GB, too little for Hermes. Charles agreed to more
+("Yes you can - later the LLM memory is more important"), so 4 GB:
+
+```sh
+colima stop && colima start --memory 4    # start-colima.sh now uses --memory 4
+```
+
+## 10. Hermes Agent (Docker)
+
+```sh
+docker pull nousresearch/hermes-agent:latest
+docker volume create sid-local-ai_hermes-data
+H() { docker run --rm -v sid-local-ai_hermes-data:/opt/data nousresearch/hermes-agent:latest "$@"; }
+H config set model.provider custom
+H config set model.base_url http://host.docker.internal:8890/v1
+H config set model.default unsloth/Qwen3.8-27B-GGUF
+H config set model.api_key "$UNSLOTH_API_KEY"
+H config set model.context_length 65536
+```
+
+The first test failed: Hermes needs at least a 64K context, so Unsloth now runs with
+`--max-seq-length 65536` (~23.7 GB, up from 22.1 GB at 32K).
+
+```sh
+H chat -q "Reply with exactly: hermes is using local qwen" --oneshot -Q
+# -> hermes is using local qwen   (~2.5 min)
+```
+
+Dashboard password generated into `.env` (`HERMES_DASHBOARD_USER`, `HERMES_DASHBOARD_PASSWORD`).
+
+```sh
+./scripts/start-hermes.sh   # compose up -d hermes, waits for http://localhost:9119
+./scripts/stop-hermes.sh
+docker exec hermes hermes <command>   # e.g. hermes config get model
+```

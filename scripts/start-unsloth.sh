@@ -17,7 +17,7 @@ fi
 mkdir -p logs
 nohup "${UNSLOTH}" studio run \
   --model unsloth/Qwen3.8-27B-GGUF --gguf-variant UD-Q4_K_XL \
-  --max-seq-length 32768 \
+  --max-seq-length 65536 \
   -p "${PORT}" --api-key-name open-webui \
   --temperature 1.0 --top-p 0.95 --top-k 20 --min-p 0.0 \
   >logs/unsloth.log 2>&1 &

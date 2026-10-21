@@ -20,5 +20,28 @@ services:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes
+    command: ["gateway", "run"]
+    ports:
+      - "127.0.0.1:9119:9119"   # dashboard: http://localhost:9119 (basic auth)
+    volumes:
+      # Named volume, not a ~/.hermes bind mount: Hermes warns that SQLite on
+      # virtiofs (Colima's mount type) can corrupt. Model config lives in here
+      # (model.provider=custom -> Unsloth at host.docker.internal:8890/v1).
+      - hermes-data:/opt/data
+    environment:
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=${HERMES_DASHBOARD_USER:-sid}
+      - HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=${HERMES_DASHBOARD_PASSWORD:?set in .env}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    mem_limit: 2g
+    restart: unless-stopped
+
 volumes:
   open-webui:
+  hermes-data:
+    name: sid-local-ai_hermes-data
+    external: true   # created by scripts/start-hermes.sh
