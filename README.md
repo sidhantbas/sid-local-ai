@@ -34,8 +34,8 @@ config/     non-secret configuration notes
 - [ ] Unsloth Studio + `qwen3.8-27b-q4-k-xl`
 - [ ] Open WebUI connected to the local model (Unsloth port)
 - [ ] Hermes Agent (docker compose)
-- [ ] uv + bun installed locally
+- [x] uv + bun installed locally
 - [ ] gws CLI: 3 profiles (one per Gmail account), tested with Gmail / Calendar / Tasks
-- [ ] HyperFrames skills installed via bun
+- [x] HyperFrames skills installed via bun
 - [ ] AGENTS.md copied from the original
 - [ ] Start/stop scripts for every component
