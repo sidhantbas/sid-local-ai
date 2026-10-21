@@ -20,5 +20,8 @@ profile="$1"; shift
 [[ " ${PROFILES[*]} " == *" ${profile} "* ]] || { echo "unknown profile: ${profile}" >&2; usage; }
 
 export GOOGLE_WORKSPACE_CLI_CONFIG_DIR="${PROFILE_ROOT}/${profile}"
+# Don't bill requests to the sid-local-ai Cloud project: only the project owner
+# has serviceusage permission on it, so other accounts get 403 on Tasks otherwise.
+export GOOGLE_WORKSPACE_PROJECT_ID=""
 mkdir -p "${GOOGLE_WORKSPACE_CLI_CONFIG_DIR}"
 exec gws "$@"
