@@ -1,0 +1,10 @@
+date: 2026-10-22 22:05:49 BST
+machine: Apple M4 Pro, 48 GB
+llama-benchy: llama-benchy 0.4.0
+target: engine (http://127.0.0.1:56814/v1)
+model: unsloth/Qwen3.8-27B-GGUF (tokenizer Qwen/Qwen3.8-27B)
+unsloth: 33448 /Users/sid/.unsloth/studio/unsloth_studio/bin/python /Users/sid/.local/bin/unsloth studio run --model unsloth/Qwen3.8-27B-GGUF --gguf-variant UD-Q4_K_XL --max-seq-length 65536 -p 8890  --temperature 1.0 --top-p 0.95 --top-k 20 --min-p 0.0
+llama-server: 33513 /Users/sid/.unsloth/llama.cpp/build/bin/llama-server -m /Users/sid/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/Qwen3.8-27B-UD-Q4_K_XL.gguf --port 56814 --parallel 4 --flash-attn on --no-context-shift -c 65536 --video-fps 1 --alias unsloth/Qwen3.8-27B-GGUF --fit on --metrics --slot-save-path /Users/sid/.unsloth/studio/cache/llama-slots --kv-unified --fit-ctx 65536 --fit-target 2077 --jinja --verbosity 4 --spec-type ngram-mod,draft-mtp --spec-draft-n-max 3 --spec-ngram-mod-n-match 24 --spec-ngram-mod-n-min 48 --spec-ngram-mod-n-max 64 --reasoning on --chat-template-kwargs {"preserve_thinking": true} --mmproj /Users/sid/.cache/huggingface/hub/models--unsloth--Qwen3.8-27B-GGUF/snapshots/4ca720788d1e01f1bff70c033e0d0028fd02e502/mmproj-F16.gguf --api-key-file /Users/sid/.unsloth/studio/auth/llama_api_key_b6498aedde7a5479 --ctx-checkpoints 4
+llama-server RSS: 24743 MB
+memory before: swap used 5647.62M, free percentage: 38%
+memory after: swap used 6769.19M, free percentage: 21%
