@@ -5,3 +5,5 @@
 config/**/credentials*.json
 config/**/token*.json
 logs/
+cli/.venv/
+__pycache__/
