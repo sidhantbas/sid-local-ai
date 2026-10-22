@@ -220,3 +220,41 @@ sid clap test                        # tuned in the room: double claps detected,
 launchctl print gui/$(id -u)/com.sidlocalai.clapd | grep state   # -> running
 cat ~/Library/Logs/sid-clapd.log     # -> "listening 60s (login)", no mic warning
 ```
+
+## 12. CLI tools: gh, hf, cf
+
+```sh
+gh auth status                          # already logged in as sidhantbas (keyring)
+gh repo view sidhantbas/sid-local-ai
+
+uv tool install huggingface_hub         # hf 2.2.0 in ~/.local/bin, ahead of /opt/anaconda3/bin/hf
+hf auth login                           # paste a read token from huggingface.co/settings/tokens
+hf auth whoami
+
+brew install node@24                    # cf needs Node >= 22.18; /usr/local/bin/node was 22.17
+# ~/.zshrc: export PATH="/opt/homebrew/opt/node@24/bin:$PATH"
+npm install --global cf                 # Cloudflare CLI (open beta), into ~/.npm-global
+cf --version                            # 1.0.0-beta.20
+cf auth login                           # opens the browser
+```
+
+`npm` skipped the `workerd` postinstall script (npm's install-script allowlist); it is
+only needed for local Workers development.
+
+## 13. Benchmark: llama-benchy
+
+```sh
+uv tool install llama-benchy            # 0.4.0
+./scripts/bench-unsloth.sh --engine ctx64k   # straight to Unsloth's llama-server
+./scripts/bench-unsloth.sh ctx64k            # through Unsloth's API on :8890
+```
+
+Results, settings and logs per run in `benchmarks/<date>-<target>-<label>/`; summary in
+[benchmarks/README.md](../benchmarks/README.md). Notes from the first runs:
+
+- Through Unsloth's API the stream opens before the prompt is processed, so llama-benchy's
+  `pp t/s` and `ttfr` are not meaningful there (pp512 showed 1770 t/s, ttfr 9 ms); the
+  engine target gives the real prompt-processing speed.
+- With thinking on, Unsloth ends the turn inside the reasoning and llama-benchy records no
+  prompt-processing row, so the script sends `enable_thinking: false`.
+- Tokenizer: `Qwen/Qwen3.8-27B` (the GGUF repo has no tokenizer files).
