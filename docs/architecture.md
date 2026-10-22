@@ -5,6 +5,7 @@
 ```
 macOS host (Apple Silicon, 48 GB)
 ├── Unsloth Studio (native)  ── serves Qwen3.8-27B UD-Q4_K_XL on 127.0.0.1:8890/v1
+├── sid CLI (native)         ── launcher/menu over scripts/; clap listener via launchd
 └── Colima VM (VZ, 4 CPU, 4 GB RAM, Docker runtime)
     ├── Open WebUI     ── talks to Unsloth via host.docker.internal:8890/v1
     └── Hermes Agent   ── dashboard :9119; model via host.docker.internal:8890/v1
@@ -21,6 +22,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
 | Open WebUI    | Docker (Colima)  | 3000 | running     |
 | Unsloth Studio| macOS native     | 8890 | running     |
 | Hermes Agent  | Docker (Colima)  | 9119 | running     |
+| sid CLI       | macOS (launchd)  | -    | installed   |
 
 ## Colima
 
@@ -86,3 +88,14 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Memory: ~430 MB idle, capped at 2 GB (`mem_limit`). Browser tools would need more.
 - Speed: a one-line question took ~2.5 min end to end, mostly Qwen reading Hermes's large
   system prompt
+
+## sid CLI
+
+- `uv tool` install (editable) of `cli/`; binary `~/.local/bin/sid`
+- Menu actions call the scripts in `scripts/`, so the CLI adds no separate logic
+  for starting or stopping services
+- LaunchAgent `com.sidlocalai.clapd` runs `sid clap daemon`: it listens to the mic
+  for 60 s after login and each screen unlock; a double clap runs `sid launch`,
+  which opens Ghostty full screen with `cli/assets/ghostty-hacker.conf`
+- No audio is stored; detection uses per-block peak/RMS against a noise floor
+- Details: [cli/README.md](../cli/README.md)

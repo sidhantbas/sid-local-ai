@@ -22,6 +22,9 @@ Every command used to set this machine up is recorded in
 ./scripts/stop-unsloth.sh       # stop Unsloth Studio (frees the model's memory)
 ```
 
+Or use the launcher: `sid` (boot screen + menu), `sid launch` (full-screen hacker
+window), or double clap within 60 s of unlocking the Mac. See [cli/README.md](cli/README.md).
+
 Google Workspace (one profile per Gmail account):
 
 ```sh
@@ -36,6 +39,7 @@ docs/       architecture + setup log
 scripts/    start / stop / status scripts
 docker/     docker-compose files (Open WebUI, Hermes Agent)
 config/     non-secret configuration notes
+cli/        sid CLI (hacker launcher + double-clap listener)
 ```
 
 ## Progress
@@ -50,3 +54,4 @@ config/     non-secret configuration notes
 - [x] HyperFrames skills installed via bun
 - [ ] AGENTS.md copied from the original
 - [x] Start/stop scripts for every component (Colima, Open WebUI, Unsloth, Hermes)
+- [x] `sid` CLI with double-clap launcher (LaunchAgent)

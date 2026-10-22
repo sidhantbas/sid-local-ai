@@ -205,3 +205,18 @@ Dashboard password generated into `.env` (`HERMES_DASHBOARD_USER`, `HERMES_DASHB
 ./scripts/stop-hermes.sh
 docker exec hermes hermes <command>   # e.g. hermes config get model
 ```
+
+## 11. sid CLI + double-clap launcher
+
+Python 3.14 package in `cli/` (rich, sounddevice, numpy, pyobjc-framework-Cocoa),
+terminal: Ghostty 1.3.1 with the Matrix theme. Details in [cli/README.md](../cli/README.md).
+
+```sh
+./scripts/install-cli.sh --no-clap   # uv tool install --force --editable ./cli
+sid status                           # checks all services in ~2 s
+sid launch                           # full-screen hacker window
+sid clap test                        # tuned in the room: double claps detected, normal noise ignored
+./scripts/install-cli.sh             # + LaunchAgent com.sidlocalai.clapd
+launchctl print gui/$(id -u)/com.sidlocalai.clapd | grep state   # -> running
+cat ~/Library/Logs/sid-clapd.log     # -> "listening 60s (login)", no mic warning
+```
