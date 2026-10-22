@@ -18,7 +18,6 @@ set -a; . ./.env; set +a
 target=unsloth
 [ "${1:-}" = "--engine" ] && { target=engine; shift; }
 label="${1:?usage: bench-unsloth.sh [--engine] <label> [llama-benchy args]}"; shift
-out="benchmarks/$(date +%Y%m%d-%H%M)-${target}-${label}"
 
 if [ "${target}" = engine ]; then
   # llama-server's port and key file are only visible on its command line
@@ -29,7 +28,15 @@ else
   base_url="http://127.0.0.1:${UNSLOTH_PORT}/v1"
   api_key="${UNSLOTH_API_KEY}"
 fi
-mkdir -p "${out}"
+
+# whichever model Unsloth has loaded; llama-benchy needs the original repo's tokenizer
+model="$(curl -fsS "${base_url}/models" -H "Authorization: Bearer ${api_key}" \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["data"][0]["id"])')"
+case "${model}" in
+  *Qwen3.8-27B*)     tokenizer=Qwen/Qwen3.8-27B ;;
+  *Qwen3.6-35B-A3B*) tokenizer=Qwen/Qwen3.6-35B-A3B ;;
+  *) echo "no tokenizer known for ${model}" >&2; exit 1 ;;
+esac
 
 memory() { echo "$(sysctl -n vm.swapusage | awk '{print "swap used", $6}'), $(memory_pressure | tail -1 | sed 's/System-wide memory //')"; }
 
@@ -38,12 +45,15 @@ swap_mb="$(sysctl -n vm.swapusage | awk '{gsub("M","",$6); print int($6)}')"
 if [ "${swap_mb}" -gt 2048 ]; then
   echo "warning: ${swap_mb} MB of swap in use; close Chrome and other large apps for valid results" >&2
 fi
+out="benchmarks/$(date +%Y%m%d-%H%M)-${target}-${label}"
+mkdir -p "${out}"
 
 {
   echo "date: $(date '+%F %T %Z')"
   echo "machine: $(sysctl -n machdep.cpu.brand_string), $(( $(sysctl -n hw.memsize) / 1073741824 )) GB"
   echo "llama-benchy: $(llama-benchy --version 2>&1)"
   echo "target: ${target} (${base_url})"
+  echo "model: ${model} (tokenizer ${tokenizer})"
   echo "unsloth: $(pgrep -fl 'unsloth studio run' | head -1 | sed 's/--api-key[^ ]* [^ ]*//')"
   echo "llama-server: $(pgrep -fl llama-server | head -1 | sed 's/--api-key [^ ]*//')"
   echo "llama-server RSS: $(( $(ps -o rss= -p "$(pgrep -f llama-server | head -1)") / 1024 )) MB"
@@ -58,8 +68,8 @@ args=(--pp 2048 --tg 128 --depth 0 8192 32768 --runs 3)
 llama-benchy \
   --base-url "${base_url}" \
   --api-key "${api_key}" \
-  --model unsloth/Qwen3.8-27B-GGUF \
-  --tokenizer Qwen/Qwen3.8-27B \
+  --model "${model}" \
+  --tokenizer "${tokenizer}" \
   --no-cache --latency-mode generation \
   --extra-body 'chat_template_kwargs={"enable_thinking": false}' \
   --format md --save-result "${out}/results.md" \
