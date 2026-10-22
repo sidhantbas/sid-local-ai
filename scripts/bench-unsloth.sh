@@ -31,6 +31,14 @@ else
 fi
 mkdir -p "${out}"
 
+memory() { echo "$(sysctl -n vm.swapusage | awk '{print "swap used", $6}'), $(memory_pressure | tail -1 | sed 's/System-wide memory //')"; }
+
+# swapping makes every number meaningless (2026-10-22: Chrome 13 GB + swap full, runs 4x slower)
+swap_mb="$(sysctl -n vm.swapusage | awk '{gsub("M","",$6); print int($6)}')"
+if [ "${swap_mb}" -gt 2048 ]; then
+  echo "warning: ${swap_mb} MB of swap in use; close Chrome and other large apps for valid results" >&2
+fi
+
 {
   echo "date: $(date '+%F %T %Z')"
   echo "machine: $(sysctl -n machdep.cpu.brand_string), $(( $(sysctl -n hw.memsize) / 1073741824 )) GB"
@@ -39,6 +47,7 @@ mkdir -p "${out}"
   echo "unsloth: $(pgrep -fl 'unsloth studio run' | head -1 | sed 's/--api-key[^ ]* [^ ]*//')"
   echo "llama-server: $(pgrep -fl llama-server | head -1 | sed 's/--api-key [^ ]*//')"
   echo "llama-server RSS: $(( $(ps -o rss= -p "$(pgrep -f llama-server | head -1)") / 1024 )) MB"
+  echo "memory before: $(memory)"
 } > "${out}/environment.txt"
 
 # defaults: 2K prompt + 128 generated tokens at 0 / 8K / 32K of earlier context,
@@ -56,4 +65,5 @@ llama-benchy \
   --format md --save-result "${out}/results.md" \
   "${args[@]}" 2>&1 | tee "${out}/run.log"
 
+echo "memory after: $(memory)" >> "${out}/environment.txt"
 echo "saved: ${out}"
