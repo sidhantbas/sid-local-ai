@@ -65,3 +65,8 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 ## W6 — Naming (P2)
 
 - [ ] (XS) P2 Confirm with Charles what "final name" refers to (repo, CLI or the whole stack) and reply
+
+## W7 — Strata trial (P2, Charles 2026-10-22)
+
+- [x] (S) P2 Read Niko1221/Strata (v0.2.2): its Mac engine runs only Qwen3.8-Flash-Next (125B MoE); on 48 GB that means the Gyro-S pack (~38 GB resident); Qwen3.6-35B-A3B is not supported on Mac (2026-10-22)
+- [~] (M) P2 Benchmark Strata Gyro-S against Unsloth 35B-A3B with the same method (Unsloth stopped, Chrome closed, ~60 GB download); waiting for Charles: switch Hermes to it, or benchmark only
