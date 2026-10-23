@@ -258,3 +258,20 @@ Results, settings and logs per run in `benchmarks/<date>-<target>-<label>/`; sum
 - With thinking on, Unsloth ends the turn inside the reasoning and llama-benchy records no
   prompt-processing row, so the script sends `enable_thinking: false`.
 - Tokenizer: `Qwen/Qwen3.8-27B` (the GGUF repo has no tokenizer files).
+
+## 14. Qwen3.6-35B-A3B as the default model (2026-10-22/23)
+
+```sh
+HF_HUB_DISABLE_XET=1 hf download unsloth/Qwen3.6-35B-A3B-MTP-GGUF \
+  Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf mmproj-F16.gguf
+shasum -a 256 <snapshot>/Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf
+# 55983c5a75a1ab969824077b3bb3de4146e82a9234072b48ad4e8f92ad3fe9f1 (matches Hugging Face)
+./scripts/stop-unsloth.sh && ./scripts/start-unsloth.sh 35b-a3b
+./scripts/bench-unsloth.sh --engine 35b-a3b-ctx64k
+docker exec hermes hermes config set model.default unsloth/Qwen3.6-35B-A3B-MTP-GGUF
+docker exec hermes hermes chat -q "What is the capital of Nepal?" --oneshot -Q   # 31 s, then 4 s
+```
+
+Chosen over Strata (Niko1221/Strata, sent by Charles): its Mac engine does not run
+Qwen3.6-35B-A3B, and on 48 GB it can only run the Gyro-S pack of Qwen3.8-Flash-Next
+(~38 GB resident). `start-unsloth.sh` defaults to `35b-a3b` since 2026-10-23; `27b` still works.

@@ -4,7 +4,7 @@
 
 ```
 macOS host (Apple Silicon, 48 GB)
-├── Unsloth Studio (native)  ── serves Qwen3.8-27B UD-Q4_K_XL on 127.0.0.1:8890/v1
+├── Unsloth Studio (native)  ── serves Qwen3.6-35B-A3B UD-Q4_K_XL on 127.0.0.1:8890/v1
 ├── sid CLI (native)         ── launcher/menu over scripts/; clap listener via launchd
 └── Colima VM (VZ, 4 CPU, 4 GB RAM, Docker runtime)
     ├── Open WebUI     ── talks to Unsloth via host.docker.internal:8890/v1
@@ -51,9 +51,14 @@ directly; Colima only needs enough RAM for the lightweight containers.
 
 - Native macOS install in `~/.unsloth/studio`; CLI `~/.local/bin/unsloth`
 - Started by `scripts/start-unsloth.sh` (`unsloth studio run`), logs in `logs/unsloth.log`
-- Model: `unsloth/Qwen3.8-27B-GGUF`, variant `UD-Q4_K_XL` (17.56 GB file, from the
-  Hugging Face cache), context 64K tokens (Hermes requires at least 64K); sampling temp 1.0 / top-p 0.95 /
-  top-k 20 / min-p 0
+- Models (one loaded at a time, both `UD-Q4_K_XL` from the Hugging Face cache):
+  - default since 2026-10-23: `unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (mixture of experts,
+    3B active, 22.85 GB): ~813 t/s prompt, ~58 t/s generation
+  - `unsloth/Qwen3.8-27B-GGUF` (dense, 17.56 GB): ~118 t/s prompt, ~19 t/s generation
+  - figures and method: [benchmarks/README.md](../benchmarks/README.md)
+- Context 64K tokens (Hermes requires at least 64K); sampling temp 1.0 / top-p 0.95 /
+  top-k 20 / min-p 0; Unsloth runs llama-server with 4 slots sharing one KV cache and
+  MTP + n-gram speculative decoding
 - API: OpenAI-compatible at `http://127.0.0.1:8890/v1` (also Anthropic `/v1/messages`),
   Bearer key labelled `open-webui`, stored in `.env` as `UNSLOTH_API_KEY` (git-ignored).
   The key is reused across restarts.
@@ -81,13 +86,14 @@ directly; Colima only needs enough RAM for the lightweight containers.
   memories). Not a `~/.hermes` bind mount, because Hermes warns SQLite on virtiofs
   bind mounts can corrupt. The older native install in `~/.hermes` (June) is untouched.
 - Model: `model.provider=custom`, `model.base_url=http://host.docker.internal:8890/v1`,
-  `model.default=unsloth/Qwen3.8-27B-GGUF`, `model.context_length=65536`. Hermes refuses
-  models with less than 64K context.
+  `model.default=unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (must match the model Unsloth has loaded;
+  `docker exec hermes hermes config set model.default <id>` after switching),
+  `model.context_length=65536`. Hermes refuses models with less than 64K context.
 - Dashboard: http://localhost:9119 (published on 127.0.0.1 only), login form with
   `HERMES_DASHBOARD_USER` / `HERMES_DASHBOARD_PASSWORD` from `.env`
 - Memory: ~430 MB idle, capped at 2 GB (`mem_limit`). Browser tools would need more.
-- Speed: a one-line question took ~2.5 min end to end, mostly Qwen reading Hermes's large
-  system prompt
+- Speed: Hermes sends a ~14K-token system prompt (tools, skills). "What is the capital of
+  Nepal?": 132 s on the 27B, 31 s on the 35B-A3B; 9 s / 4 s once the prompt is cached
 
 ## sid CLI
 

@@ -11,7 +11,8 @@ Every command used to set this machine up is recorded in
 ## Quick start
 
 ```sh
-./scripts/start-unsloth.sh      # start Unsloth Studio + Qwen3.8-27B -> :8890 (~24 GB RAM)
+./scripts/start-unsloth.sh      # start Unsloth Studio + Qwen3.6-35B-A3B -> :8890 (add 27b for Qwen3.8-27B)
+./scripts/bench-unsloth.sh --engine <label>   # llama-benchy benchmark -> benchmarks/
 ./scripts/start-colima.sh       # start the Docker runtime (4 GB VM)
 ./scripts/start-open-webui.sh   # start Open WebUI -> http://localhost:3000
 ./scripts/start-hermes.sh       # start Hermes Agent -> dashboard http://localhost:9119
@@ -46,7 +47,7 @@ cli/        sid CLI (hacker launcher + double-clap listener)
 
 - [x] Colima Docker runtime, 4 GB RAM (raised from 2 GB for Hermes, OK from Charles)
 - [x] Open WebUI in Docker
-- [x] Unsloth Studio + `qwen3.8-27b-q4-k-xl`
+- [x] Unsloth Studio + `qwen3.8-27b-q4-k-xl` (default since 2026-10-23: Qwen3.6-35B-A3B, see [benchmarks](benchmarks/README.md))
 - [x] Open WebUI connected to the local model (Unsloth port 8890)
 - [x] Hermes Agent (docker compose, local Qwen)
 - [x] uv + bun installed locally

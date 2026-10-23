@@ -2,8 +2,11 @@
 # Start Unsloth Studio (native macOS) on port 8890 with a Qwen model loaded,
 # serving an OpenAI-compatible API at http://127.0.0.1:8890/v1.
 #
-#   ./scripts/start-unsloth.sh            # Qwen3.8-27B (dense, the default)
-#   ./scripts/start-unsloth.sh 35b-a3b    # Qwen3.6-35B-A3B (mixture of experts, 3B active)
+#   ./scripts/start-unsloth.sh            # Qwen3.6-35B-A3B (mixture of experts, 3B active; the default)
+#   ./scripts/start-unsloth.sh 27b        # Qwen3.8-27B (dense; ~7x slower prompts, 3x slower answers)
+#
+# The default changed from 27b on 2026-10-23 after benchmarks/README.md. Hermes's
+# model.default must name the loaded model (see docs/architecture.md).
 #
 # To switch models: ./scripts/stop-unsloth.sh, then start with the other one.
 # Logs: logs/unsloth.log. The API key (label "open-webui") is reused across
@@ -14,7 +17,7 @@ cd "$(dirname "$0")/.."
 PORT="${UNSLOTH_PORT:-8890}"
 UNSLOTH="${HOME}/.local/bin/unsloth"
 
-case "${1:-27b}" in
+case "${1:-35b-a3b}" in
   27b)     REPO=unsloth/Qwen3.8-27B-GGUF;          NAME=Qwen3.8-27B ;;
   35b-a3b) REPO=unsloth/Qwen3.6-35B-A3B-MTP-GGUF;  NAME=Qwen3.6-35B-A3B ;;
   *) echo "usage: start-unsloth.sh [27b|35b-a3b]" >&2; exit 2 ;;
