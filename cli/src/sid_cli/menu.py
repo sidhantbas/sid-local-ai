@@ -12,6 +12,15 @@ from .status import run_all
 START_ORDER = ["start-unsloth.sh", "start-colima.sh", "start-open-webui.sh", "start-hermes.sh"]
 STOP_ORDER = ["stop-hermes.sh", "stop-open-webui.sh", "stop-unsloth.sh"]
 
+# one-shot Hermes run: skill preloaded, terminal tool only, low reasoning (~50 s instead of
+# 10+ min of the full toolset, where -q mode blocks execute_code and the agent wanders)
+CHECK_MAIL = [
+    "docker", "exec", "-it", "hermes", "hermes", "chat", "--oneshot",
+    "-s", "google-workspace", "-t", "terminal", "--reasoning", "low",
+    "-q", "Use the google-workspace skill's google_api.py gmail search for is:unread (max 20). "
+    "List each unread email as one line: sender, subject, and a few words on what it needs.",
+]
+
 ITEMS = [
     ("1", "start stack", "unsloth -> colima -> open-webui -> hermes"),
     ("2", "talk to hermes", "agent chat on local qwen"),
@@ -19,7 +28,8 @@ ITEMS = [
     ("4", "hermes dashboard", "http://localhost:9119"),
     ("5", "status", "re-run live checks"),
     ("6", "gws check", "gmail / calendar / tasks, 3 profiles"),
-    ("7", "shut down stack", "hermes, open-webui, unsloth (frees ~24 GB)"),
+    ("7", "shut down stack", "hermes, open-webui, unsloth (frees ~25-30 GB)"),
+    ("8", "check mail", "hermes reads unread gmail (sidhantbastola7)"),
     ("q", "exit to shell", ""),
 ]
 
@@ -68,6 +78,8 @@ def loop(console: Console) -> None:
             run_scripts(console, ["test-gws.sh"])
         elif choice == "7":
             run_scripts(console, STOP_ORDER)
+        elif choice == "8":
+            subprocess.call(CHECK_MAIL)
         else:
             console.print(f"  ?? unknown command: {choice}", style="red")
         console.print()

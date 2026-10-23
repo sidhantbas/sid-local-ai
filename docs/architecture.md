@@ -89,6 +89,12 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `model.default=unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (must match the model Unsloth has loaded;
   `docker exec hermes hermes config set model.default <id>` after switching),
   `model.context_length=65536`. Hermes refuses models with less than 64K context.
+- Google: Hermes's built-in `google-workspace` skill, logged in as sidhantbastola7 only
+  (token `/opt/data/google_token.json` in the volume, mode 600; full Gmail / Calendar / Drive /
+  Docs / Sheets scopes, read-only contacts). Separate from the host's `gws` profiles, whose
+  credentials stay in the macOS keychain. One-shot runs need `-s google-workspace -t terminal`:
+  in `-q` mode Hermes blocks `execute_code`, and with the full toolset it wanders (10+ min).
+  `sid` menu item 8 runs the mail check this way (~50 s).
 - Dashboard: http://localhost:9119 (published on 127.0.0.1 only), login form with
   `HERMES_DASHBOARD_USER` / `HERMES_DASHBOARD_PASSWORD` from `.env`
 - Memory: ~430 MB idle, capped at 2 GB (`mem_limit`). Browser tools would need more.

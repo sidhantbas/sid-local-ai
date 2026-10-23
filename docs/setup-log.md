@@ -275,3 +275,30 @@ docker exec hermes hermes chat -q "What is the capital of Nepal?" --oneshot -Q  
 Chosen over Strata (Niko1221/Strata, sent by Charles): its Mac engine does not run
 Qwen3.6-35B-A3B, and on 48 GB it can only run the Gyro-S pack of Qwen3.8-Flash-Next
 (~38 GB resident). `start-unsloth.sh` defaults to `35b-a3b` since 2026-10-23; `27b` still works.
+
+## 15. 256K context and Hermes's Google skill (2026-10-23)
+
+```sh
+UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh    # 35B-A3B, ~30 GB; also sets Hermes
+./scripts/bench-unsloth.sh --engine 35b-a3b-ctx256k --pp 2048 --tg 128 --depth 0 32768 131072
+```
+
+Hermes's built-in `google-workspace` skill (chosen over a read-only bridge to the host's
+`gws`; it gives Hermes full access to one account). Run as the container's `hermes` user so
+the files stay readable by the gateway:
+
+```sh
+G="/opt/hermes/.venv/bin/python /opt/data/skills/productivity/google-workspace/scripts/setup.py"
+docker exec -i -u hermes hermes sh -c 'umask 077; cat > /opt/data/tmp_client_secret.json' \
+  < ~/.config/gws/profiles/sidhantbastola7/client_secret.json
+docker exec -u hermes hermes sh -c "$G --client-secret /opt/data/tmp_client_secret.json; rm /opt/data/tmp_client_secret.json"
+docker exec -u hermes hermes sh -c "$G --auth-url"        # open, approve, copy the localhost:1 URL
+docker exec -u hermes hermes sh -c "$G --auth-code '<the localhost:1 URL>'"
+docker exec -u hermes hermes sh -c "chmod 600 /opt/data/google_*.json; $G --check"   # AUTHENTICATED
+docker exec hermes hermes chat -q "...unread emails..." \
+  -s google-workspace -t terminal --reasoning low --oneshot -Q        # 51 s
+```
+
+Without `-s google-workspace -t terminal` the same question ran for more than 10 minutes
+(24 model calls, 74K tokens of context): in `-q` mode Hermes blocks `execute_code` and
+`python -c`, and the agent kept trying other ways. Revoke with `$G --revoke`.

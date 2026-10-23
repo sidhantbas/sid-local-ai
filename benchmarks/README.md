@@ -58,10 +58,28 @@ Hermes Agent, `hermes chat -q "What is the capital of Nepal?" --oneshot -Q`, two
 Hermes's slowness on the 27B is its ~14K-token system prompt (tools, skills) read at
 ~115 t/s. The prompt cache removes that from every following request in the same slot.
 
+## 256K context (35B-A3B, 2026-10-23)
+
+`UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh`, then
+`./scripts/bench-unsloth.sh --engine 35b-a3b-ctx256k --pp 2048 --tg 128 --depth 0 32768 131072`.
+
+| Earlier context | pp t/s | tg t/s | Time to first token |
+|---|---|---|---|
+| 0 | 775 ±32 | 50 ±7 | 2.7 s |
+| 32K | 496 ±4 | 25 ±3 | 70 s |
+| 128K | 202 ±6 | 11 ±8 | 659 s (11 min) |
+
+- Memory: wired memory 28.2 GB at 64K, 33.5 GB at 256K (Unsloth estimates the KV cache at
+  5.2 GB plus a 1.4 GB MTP reserve). Free memory went from 18% to 13% and swap grew 4.2 GB
+  during the run (a browser was open for the Google login), so 256K is usable but tight.
+- At 0 and 32K the 256K server is 3-5% slower than the 64K one (775 vs 813, 496 vs 517).
+- The scripts keep 64K as the default; 256K is `UNSLOTH_CONTEXT=262144`.
+
 ## All runs
 
 | Run | Model | Context | Target | pp t/s (d0 / 8K / 32K) | tg t/s (d0 / 8K / 32K) | Valid |
 |---|---|---|---|---|---|---|
+| [20261023-0105-engine-35b-a3b-ctx256k](20261023-0105-engine-35b-a3b-ctx256k/results.md) | 35B-A3B | 256K | engine | 775 / - / 496 / 202 (d0 / 32K / 128K) | 50 / 25 / 11 | yes; swap +4.2 GB |
 | [20261022-2326-engine-35b-a3b-ctx64k](20261022-2326-engine-35b-a3b-ctx64k/results.md) | 35B-A3B | 64K | engine | 813 / 710 / 517 | 58 / 42 / 33 | yes |
 | [20261022-2205-engine-27b-ctx64k](20261022-2205-engine-27b-ctx64k/results.md) | 27B | 64K | engine | 118 / 113 / 57 | 19 / 20 / 8 | yes; 32K row noisy (*) |
 | [20261022-1036-engine-ctx64k](20261022-1036-engine-ctx64k-INVALID-swapping/results.md) | 27B | 64K | engine | 84 / 103 / 51 | 11 / 15 / 9 | **no**: swapping |
