@@ -302,3 +302,28 @@ docker exec hermes hermes chat -q "...unread emails..." \
 Without `-s google-workspace -t terminal` the same question ran for more than 10 minutes
 (24 model calls, 74K tokens of context): in `-q` mode Hermes blocks `execute_code` and
 `python -c`, and the agent kept trying other ways. Revoke with `$G --revoke`.
+
+## 16. Strata trial (2026-10-23)
+
+```sh
+curl -fsSL https://github.com/Niko1221/Strata/releases/download/v0.2.2/install.sh -o install.sh
+# read install.sh: writes only ~/.local/share/strata and ~/.local/bin/strata, checks SHA-256 + signature
+STRATA_FEED=https://github.com/Niko1221/Strata/releases/download/v0.2.2 sh install.sh
+strata update --feed https://github.com/Niko1221/Strata/releases/download/v0.2.2 --no-control  # Metal engine 0.1.47
+STRATA_FEED=https://github.com/Niko1221/Strata/releases/download/v0.2.2 \
+  strata install -- --family gyro --model Gyro-S --context 65536 --vision no --no-start --yes  # 54 GB
+./scripts/stop-unsloth.sh
+STRATA_ALLOWED_HOSTS=host.docker.internal,host.docker.internal:8080 \
+  strata launch --model gyro-s --family gyro --context 64k --vision off --access local --port 8080 \
+  --set STRATA_METAL_STREAM=1 --no-tui --yes --feed https://github.com/Niko1221/Strata/releases/download/v0.2.2
+./scripts/bench-unsloth.sh --strata gyro-s-ctx64k
+docker exec hermes hermes config set model.base_url http://host.docker.internal:8080/v1   # test only
+docker exec hermes hermes config set model.default qwen3.8-flash-next-gyro-gyro-s
+strata launch --stop --preset "Gyro-S 64K"
+docker exec hermes hermes config set model.base_url http://host.docker.internal:8890/v1
+./scripts/start-unsloth.sh   # back to the 35B-A3B; also resets Hermes's model and context
+```
+
+Results and setup problems: [benchmarks/README.md](../benchmarks/README.md). Strata stays
+installed (models in `~/.local/share/strata/Strata-data`, 54 GB); remove that folder,
+`~/.local/share/strata` and `~/.local/bin/strata` to uninstall.

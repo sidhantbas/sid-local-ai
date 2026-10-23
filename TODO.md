@@ -8,7 +8,7 @@ description: Task ledger for the local AI stack. Open work as small units with s
 
 # TODO
 
-**Next:** Sid logs in to `hf` and `cf` (W4); compare 27B vs 35B-A3B answer quality on real tasks (W1); Strata waits for Charles (W7). Default since 2026-10-23: Qwen3.6-35B-A3B, 64K (256K with `UNSLOTH_CONTEXT=262144`, running now).
+**Next:** Sid logs in to `hf` and `cf` (W4); compare answer quality of the 27B, 35B-A3B and Strata Gyro-S on real tasks (W1); Strata benchmarked (W7): slower than the 35B-A3B on Unsloth. Default since 2026-10-23: Qwen3.6-35B-A3B, 64K (256K with `UNSLOTH_CONTEXT=262144`, running now).
 
 States: `[ ]` not started · `[.]` doing · `[~]` deferred or blocked (reason given) · `[x]` done · `[-]` cancelled or superseded.
 Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two levels. Items are never deleted.
@@ -78,4 +78,5 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 ## W7 — Strata trial (P2, Charles 2026-10-22)
 
 - [x] (S) P2 Read Niko1221/Strata (v0.2.2): its Mac engine runs only Qwen3.8-Flash-Next (125B MoE); on 48 GB that means the Gyro-S pack (~38 GB resident); Qwen3.6-35B-A3B is not supported on Mac (2026-10-22)
-- [~] (M) P2 Benchmark Strata Gyro-S against Unsloth 35B-A3B with the same method (Unsloth stopped, Chrome closed, ~60 GB download); waiting for Charles: switch Hermes to it, or benchmark only
+- [x] (M) P2 Benchmark Strata Gyro-S (streaming, 22.7 GB arena) with the same method: prompt 289 / 279 / 287 t/s, generation 29 t/s at 0 / 8K / 32K; Hermes 58 s / 55 s (no prompt-cache reuse); 35B-A3B on Unsloth stays the default (Sid, 2026-10-23)
+- [ ] (XS) P2 Ask Charles whether to keep Strata installed (54 GB on disk) for quality tests

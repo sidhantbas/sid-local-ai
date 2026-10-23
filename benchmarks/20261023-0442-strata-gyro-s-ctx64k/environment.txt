@@ -1,0 +1,9 @@
+date: 2026-10-23 04:42:21 BST
+machine: Apple M4 Pro, 48 GB
+llama-benchy: llama-benchy 0.4.0
+target: strata (http://127.0.0.1:8080/v1)
+model: qwen3.8-flash-next-gyro-gyro-s (tokenizer Qwen/Qwen3.8-Flash-Next)
+strata: strata 0.2.2 (build 0.1.47; python 3.12.15 at /Users/sid/.local/share/strata/terminal/0.1.47/python/bin/python3)
+strata engine: 47741 /Users/sid/.local/share/strata/components/engine/0.1.47-macos-arm64-metal/strata --serve --pack /Users/sid/.local/share/strata/Strata-data/packs/gyro-gyro-s --native /Users/sid/.local/share/strata/Strata-data/models/gyro-Gyro-S/Qwen3.8-Flash-Next-Gyro-S-TQ1_0.gguf --ple-gguf /Users/sid/.local/share/strata/Strata-data/models/gyro-Gyro-S/Qwen3.8-Flash-Next-Gyro-S-TQ1_0.gguf --expert-profile /U
+memory before: swap used 7391.94M, free percentage: 92%
+memory after: swap used 6743.94M, free percentage: 34%

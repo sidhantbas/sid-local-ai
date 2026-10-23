@@ -2,7 +2,7 @@
 title: Unsloth + Qwen3.8 benchmarks
 date: 2026-10-22
 creator: sidhantbas
-description: llama-benchy and Hermes timings for Qwen3.8-27B and Qwen3.6-35B-A3B (UD-Q4_K_XL) served by Unsloth Studio on the M4 Pro (48 GB), with method and caveats.
+description: llama-benchy and Hermes timings on the M4 Pro (48 GB) for Qwen3.8-27B and Qwen3.6-35B-A3B (UD-Q4_K_XL, Unsloth Studio) and Qwen3.8-Flash-Next Gyro-S (Strata), with method and caveats.
 ---
 
 # Benchmarks
@@ -58,6 +58,39 @@ Hermes Agent, `hermes chat -q "What is the capital of Nepal?" --oneshot -Q`, two
 Hermes's slowness on the 27B is its ~14K-token system prompt (tools, skills) read at
 ~115 t/s. The prompt cache removes that from every following request in the same slot.
 
+## Three engines: 27B vs 35B-A3B vs Strata Gyro-S (2026-10-23)
+
+Same test (2048-token prompt + 128 tokens, 3 runs, thinking off, Chrome closed). Strata's
+prompt speed is tokens / `e2e_ttft`, because its stream opens before the prompt is read
+(llama-benchy's pp column shows 300,000+ t/s there); the Unsloth rows are the engine target.
+
+| | Qwen3.8-27B (Unsloth) | **Qwen3.6-35B-A3B (Unsloth)** | Qwen3.8-Flash-Next Gyro-S (Strata) |
+|---|---|---|---|
+| Model | 27B dense | 35B MoE, 3B active | 125B MoE, heavily compressed |
+| Memory | ~25 GB | ~25 GB | ~33 GB (22.7 GB expert arena, rest from the SSD) |
+| Prompt t/s, d0 / 8K / 32K | 118 / 113 / 57 | **813 / 710 / 517** | 289 / 279 / 287 |
+| Generation t/s, d0 / 8K / 32K | 19 / 20 / 8 | **58 / 42 / 33** | 29 / 30 / 29 |
+| First token, 34.8K prompt | 662 s | **67 s** | 121 s |
+| Hermes "capital of Nepal", 1st / 2nd | 132 s / 9 s | **31 s / 4 s** | 58 s / 55 s |
+
+- The 35B-A3B on Unsloth is fastest on every row. Strata is 2-3x faster than the 27B and
+  runs a far larger model, and its speed does not fall with context (29 t/s at 32K vs 33 for
+  the 35B-A3B), but it reads prompts at about a third of the 35B-A3B's speed.
+- Strata did not reuse Hermes's ~14K-token prompt between questions (55 s the second time;
+  Unsloth's llama-server: 4-9 s).
+- Quality is still not compared.
+
+### Strata setup notes (v0.2.2, engine 0.1.47-metal)
+
+- Setup chose resident mode (`STRATA_METAL_STREAM=0`) and mapped the whole 58.5 GB file:
+  0 MiB of GPU memory left, the first request stalled for 60 s and the engine restarted.
+  Streaming (`--set STRATA_METAL_STREAM=1`) works: the 21,327 most-used of 24,576 experts in a
+  22.71 GB arena, the process at 33.2 GB resident, cap 40.2 GB (the GPU working set).
+- From a container, Strata answers 403 (DNS-rebinding protection) for `host.docker.internal`;
+  start it with `STRATA_ALLOWED_HOSTS=host.docker.internal,host.docker.internal:8080` in the
+  environment of `strata launch` (`--set` puts it in the engine's environment, not the server's).
+- Unsloth must be stopped while Strata runs (~33 GB + ~25 GB does not fit in 48 GB).
+
 ## 256K context (35B-A3B, 2026-10-23)
 
 `UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh`, then
@@ -79,6 +112,7 @@ Hermes's slowness on the 27B is its ~14K-token system prompt (tools, skills) rea
 
 | Run | Model | Context | Target | pp t/s (d0 / 8K / 32K) | tg t/s (d0 / 8K / 32K) | Valid |
 |---|---|---|---|---|---|---|
+| [20261023-0442-strata-gyro-s-ctx64k](20261023-0442-strata-gyro-s-ctx64k/results.md) | Strata Gyro-S | 64K | strata | 289 / 279 / 287 (tokens / e2e_ttft) | 29 / 30 / 29 | yes |
 | [20261023-0105-engine-35b-a3b-ctx256k](20261023-0105-engine-35b-a3b-ctx256k/results.md) | 35B-A3B | 256K | engine | 775 / - / 496 / 202 (d0 / 32K / 128K) | 50 / 25 / 11 | yes; swap +4.2 GB |
 | [20261022-2326-engine-35b-a3b-ctx64k](20261022-2326-engine-35b-a3b-ctx64k/results.md) | 35B-A3B | 64K | engine | 813 / 710 / 517 | 58 / 42 / 33 | yes |
 | [20261022-2205-engine-27b-ctx64k](20261022-2205-engine-27b-ctx64k/results.md) | 27B | 64K | engine | 118 / 113 / 57 | 19 / 20 / 8 | yes; 32K row noisy (*) |
