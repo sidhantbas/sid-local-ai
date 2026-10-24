@@ -118,7 +118,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
   Hermes refuses models with less than 64K context.
 - `auxiliary.title_generation.model_upgrade_enabled=false`: Hermes keeps its instant session
   title instead of asking the model, because that request evicts Strata's cached prompt
-- Google: one Hermes for all three accounts. Each account has a folder
+- Google: one Hermes for all three accounts (all signed in since 2026-10-24). Each account has a folder
   `/opt/data/google-accounts/<account>/` (mode 700) with its own `google_token.json` and
   `google_client_secret.json` (full Gmail / Calendar / Drive / Docs / Sheets scopes, read-only
   contacts). The repo's `google-accounts` skill (`hermes/skills/`, copied in by

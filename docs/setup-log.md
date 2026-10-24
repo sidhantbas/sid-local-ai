@@ -370,3 +370,7 @@ HERMES_HOME=/opt/data/google-accounts/<account> ... setup.py --auth-code '<redir
 Verified: sidhantbastola7 works from its folder (20 unread found), `gacct list` shows the
 other two as not signed in, and Hermes answered "check unread email in all my accounts" with
 4 tool calls in 117 s on Strata.
+
+Then Sid signed in sibastola6ucl and disisidstudio. `gacct list`: all 3 signed in; each
+reads Gmail and Calendar. "Check unread email in all my Google accounts": 2 tool calls,
+165 s on Strata, 20 unread per account listed under one heading per account.
