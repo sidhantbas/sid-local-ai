@@ -100,6 +100,7 @@ Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/sk
 - [ ] (XS) P2 Rotate the bot token (it was pasted into a chat; BotFather `/mybots` -> API Token -> Revoke), then rerun `scripts/hermes-telegram.sh 8547315541`
 - [x] (S) P1 Voice notes: local speech-to-text, faster-whisper 1.2.1 (model `base`, 142 MB in the data volume) baked into `docker/hermes.Dockerfile` on the pinned Hermes image; a test note transcribed correctly in 2 s (12 s first time, with the download) (2026-10-24)
 - [ ] (XS) P1 Sid sends a real voice note from the iPhone
+- [x] (XS) P1 Keep answering while the laptop is open: LaunchAgent `com.sidlocalai.keepawake` (`scripts/install-keep-awake.sh`) holds `caffeinate -i -w <model pid>` while Strata or llama-server runs; display sleep and lid-close sleep unchanged (Sid, 2026-10-24)
 - [ ] (L) P2 Mobile B: HumanLoop web app on the iPhone home screen, served by the Mac over Tailscale: offline capture and check-ins queued on the phone, synced to `~/humanloop`, web push; iOS Shortcut in the share sheet for WhatsApp messages
 - [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
 - [ ] (M) P2 Phase 4: evening reflection, patterns from outcomes, spoken briefings (`say`), coaching tone from preferences.md

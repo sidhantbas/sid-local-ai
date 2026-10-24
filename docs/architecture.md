@@ -175,3 +175,12 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Voice notes are transcribed in Hermes by faster-whisper (`stt.provider: local`, model
   `base`, cached in the volume via `HF_HOME=/opt/data/.cache/huggingface`): the audio never
   leaves the Mac. ~2 s for a short note.
+
+## Keep-awake agent
+
+- LaunchAgent `com.sidlocalai.keepawake` runs `scripts/keep-awake.sh` (installed by
+  `scripts/install-keep-awake.sh`, log `~/Library/Logs/sid-keepawake.log`).
+- While Strata's engine or llama-server runs, it holds `caffeinate -i -w <pid>`: no idle
+  sleep, so Hermes and the Telegram bot keep answering. The display still sleeps after
+  10 minutes, and closing the lid still sleeps the Mac. When the model stops, the Mac's
+  usual settings apply again (sleep 1 minute after the display).

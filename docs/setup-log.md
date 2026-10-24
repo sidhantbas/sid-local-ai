@@ -428,3 +428,14 @@ docker restart hermes
 Test: `say` → AIFF → Ogg/Opus (Telegram's voice format) → `transcribe_audio()`: "To do,
 email my supervisor about the dissertation extension before Friday." 12 s the first time
 (142 MB model download into the volume), 2 s after. Hermes uses ~0.5 of its 2 GB.
+
+## 22. Stay awake while a model serves (2026-10-24)
+
+`pmset -g`: sleep 1 minute after the display (display sleep 10 minutes), so with the lid open
+but idle, Strata, Colima and the Telegram bot paused. Sid: keep the agent running until the
+laptop is folded.
+
+```sh
+./scripts/install-keep-awake.sh   # LaunchAgent: caffeinate -i -w <model pid> while a model runs
+pmset -g assertions               # "caffeinate asserting on behalf of Process ID <strata pid>"
+```
