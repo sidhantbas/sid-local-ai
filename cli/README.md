@@ -60,7 +60,7 @@ src/sid_cli/
   main.py     argument parsing
   boot.py     matrix rain, glitch banner, status lines
   menu.py     menu loop, runs ../scripts/*
-  status.py   parallel checks (Colima, Unsloth, Open WebUI, Hermes, gws, memory)
+  status.py   parallel checks (Colima, Strata or Unsloth, Open WebUI, Hermes, gws, memory)
   clap.py     double-clap detector, test meter, launchd daemon
   launch.py   opens the styled Ghostty window
   paths.py    repo / config paths, .env loading

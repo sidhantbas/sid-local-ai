@@ -7,11 +7,13 @@
 #
 # The default changed from 27b on 2026-10-23 after benchmarks/README.md. Hermes's
 # model.default must name the loaded model (see docs/architecture.md).
+# Since 2026-10-24 the main model is Strata's (./scripts/start-strata.sh); this is the
+# fast alternative. Only one fits in 48 GB, so this stops Strata first.
 #
 # To switch models: ./scripts/stop-unsloth.sh, then start with the other one.
 # Context: UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh for the full 256K
 # (35B-A3B: ~30 GB instead of ~25 GB; see benchmarks/README.md).
-# If the Hermes container is running, its model and context are updated to match.
+# If the Hermes container is running, it is pointed at Unsloth with this model and context.
 # Logs: logs/unsloth.log. The API key (label "open-webui") is reused across
 # runs and lives in .env as UNSLOTH_API_KEY.
 set -euo pipefail
@@ -32,6 +34,8 @@ if curl -fsS "http://127.0.0.1:${PORT}/api/health" >/dev/null 2>&1; then
   exit 0
 fi
 
+./scripts/stop-strata.sh >/dev/null
+
 mkdir -p logs
 nohup "${UNSLOTH}" studio run \
   --model "${REPO}" --gguf-variant UD-Q4_K_XL \
@@ -46,6 +50,7 @@ for _ in $(seq 1 60); do
     echo "Unsloth Studio is up: http://127.0.0.1:${PORT} (API: /v1)"
     # Hermes must name the loaded model and may not assume more context than it has
     if docker ps --format '{{.Names}}' 2>/dev/null | grep -qx hermes; then
+      docker exec hermes hermes config set model.base_url "http://host.docker.internal:${PORT}/v1" >/dev/null
       docker exec hermes hermes config set model.default "${REPO}" >/dev/null
       docker exec hermes hermes config set model.context_length "${CONTEXT}" >/dev/null
       echo "Hermes now uses ${REPO} with ${CONTEXT} tokens of context."

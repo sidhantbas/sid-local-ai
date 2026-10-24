@@ -9,13 +9,13 @@ services:
     volumes:
       - open-webui:/app/backend/data
     environment:
-      # No Ollama here; the model is served by Unsloth Studio on the host as an
-      # OpenAI-compatible API. Values come from ../.env (see scripts/start-open-webui.sh).
+      # No Ollama here; models are served on the host as OpenAI-compatible APIs:
+      # Unsloth Studio (:8890, key from ../.env) and Strata (:8080, no key on this Mac).
       # Open WebUI only reads these on first start; afterwards its saved settings win.
       - ENABLE_OLLAMA_API=false
       - ENABLE_OPENAI_API=true
-      - OPENAI_API_BASE_URL=http://host.docker.internal:${UNSLOTH_PORT:-8890}/v1
-      - OPENAI_API_KEY=${UNSLOTH_API_KEY:-}
+      - OPENAI_API_BASE_URLS=http://host.docker.internal:${UNSLOTH_PORT:-8890}/v1;http://host.docker.internal:${STRATA_PORT:-8080}/v1
+      - OPENAI_API_KEYS=${UNSLOTH_API_KEY:-};none
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
@@ -29,7 +29,8 @@ services:
     volumes:
       # Named volume, not a ~/.hermes bind mount: Hermes warns that SQLite on
       # virtiofs (Colima's mount type) can corrupt. Model config lives in here
-      # (model.provider=custom -> Unsloth at host.docker.internal:8890/v1).
+      # (model.provider=custom -> Strata at host.docker.internal:8080/v1, or Unsloth at
+      # :8890/v1; set by scripts/start-strata.sh and start-unsloth.sh).
       - hermes-data:/opt/data
     environment:
       - HERMES_DASHBOARD=1

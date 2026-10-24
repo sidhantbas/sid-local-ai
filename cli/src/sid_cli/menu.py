@@ -9,8 +9,9 @@ from .boot import DARK, DIM, GREEN, show_status
 from .paths import SCRIPTS
 from .status import run_all
 
-START_ORDER = ["start-unsloth.sh", "start-colima.sh", "start-open-webui.sh", "start-hermes.sh"]
-STOP_ORDER = ["stop-hermes.sh", "stop-open-webui.sh", "stop-unsloth.sh"]
+# Hermes starts before the model so start-strata.sh can point it at Strata
+START_ORDER = ["start-colima.sh", "start-open-webui.sh", "start-hermes.sh", "start-strata.sh"]
+STOP_ORDER = ["stop-hermes.sh", "stop-open-webui.sh", "stop-strata.sh", "stop-unsloth.sh"]
 
 # one-shot Hermes run: skill preloaded, terminal tool only, low reasoning (~50 s instead of
 # 10+ min of the full toolset, where -q mode blocks execute_code and the agent wanders)
@@ -22,13 +23,13 @@ CHECK_MAIL = [
 ]
 
 ITEMS = [
-    ("1", "start stack", "unsloth -> colima -> open-webui -> hermes"),
-    ("2", "talk to hermes", "agent chat on local qwen"),
+    ("1", "start stack", "colima -> open-webui -> hermes -> strata"),
+    ("2", "talk to hermes", "agent chat on the local model"),
     ("3", "open webui", "http://localhost:3000"),
     ("4", "hermes dashboard", "http://localhost:9119"),
     ("5", "status", "re-run live checks"),
     ("6", "gws check", "gmail / calendar / tasks, 3 profiles"),
-    ("7", "shut down stack", "hermes, open-webui, unsloth (frees ~25-30 GB)"),
+    ("7", "shut down stack", "hermes, open-webui, strata/unsloth (frees ~25-33 GB)"),
     ("8", "check mail", "hermes reads unread gmail (sidhantbastola7)"),
     ("q", "exit to shell", ""),
 ]

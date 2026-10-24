@@ -1,14 +1,14 @@
 ---
 title: sid-local-ai TODO
 created: 2026-10-22
-modified: 2026-10-22
+modified: 2026-10-24
 creator: sidhantbas
 description: Task ledger for the local AI stack. Open work as small units with status, size and priority, grouped by workstream; done items stay in place.
 ---
 
 # TODO
 
-**Next:** Sid logs in to `hf` and `cf` (W4); compare answer quality of the 27B, 35B-A3B and Strata Gyro-S on real tasks (W1); Strata benchmarked (W7): slower than the 35B-A3B on Unsloth. Default since 2026-10-23: Qwen3.6-35B-A3B, 64K (256K with `UNSLOTH_CONTEXT=262144`, running now).
+**Next:** Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
 
 States: `[ ]` not started · `[.]` doing · `[~]` deferred or blocked (reason given) · `[x]` done · `[-]` cancelled or superseded.
 Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two levels. Items are never deleted.
@@ -75,8 +75,12 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 
 - [ ] (XS) P2 Confirm with Charles what "final name" refers to (repo, CLI or the whole stack) and reply
 
-## W7 — Strata trial (P2, Charles 2026-10-22)
+## W7 — Strata, the main model (P1, Charles 2026-10-22; main since 2026-10-24)
 
 - [x] (S) P2 Read Niko1221/Strata (v0.2.2): its Mac engine runs only Qwen3.8-Flash-Next (125B MoE); on 48 GB that means the Gyro-S pack (~38 GB resident); Qwen3.6-35B-A3B is not supported on Mac (2026-10-22)
 - [x] (M) P2 Benchmark Strata Gyro-S (streaming, 22.7 GB arena) with the same method: prompt 289 / 279 / 287 t/s, generation 29 t/s at 0 / 8K / 32K; Hermes 58 s / 55 s (no prompt-cache reuse); 35B-A3B on Unsloth stays the default (Sid, 2026-10-23)
-- [ ] (XS) P2 Ask Charles whether to keep Strata installed (54 GB on disk) for quality tests
+- [x] (XS) P2 Ask Charles whether to keep Strata installed (54 GB on disk) for quality tests: keep it, Strata's Qwen3.8-Flash-Next should be the main model (Charles, 2026-10-24)
+- [x] (S) P1 Find why Hermes's second question took 55 s on Strata: Strata keeps one cached prompt, and Hermes's session-title request replaced it; fixed with `auxiliary.title_generation.model_upgrade_enabled false` (5-6 s now; `--parallel 2` did not help) (Sid, 2026-10-24)
+- [x] (S) P1 Make Strata the main model: `scripts/start-strata.sh` / `stop-strata.sh` (each start script stops the other server and points Hermes at itself), `sid` start stack and status, Open WebUI's second connection (Sid, 2026-10-24)
+- [ ] (XS) P1 Tell Charles: Strata is the main model, the Hermes cache fix, and that Strata is faster with Chrome closed (arena sized at start)
+- [ ] (S) P2 Ask Strata (Niko1221) whether its prompt cache can keep more than one prompt or rewind to a checkpoint, like llama-server's `--ctx-checkpoints`

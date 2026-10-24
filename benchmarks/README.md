@@ -2,7 +2,7 @@
 title: Unsloth + Qwen3.8 benchmarks
 date: 2026-10-22
 creator: sidhantbas
-description: llama-benchy and Hermes timings on the M4 Pro (48 GB) for Qwen3.8-27B and Qwen3.6-35B-A3B (UD-Q4_K_XL, Unsloth Studio) and Qwen3.8-Flash-Next Gyro-S (Strata), with method and caveats.
+description: llama-benchy and Hermes timings on the M4 Pro (48 GB) for Qwen3.8-27B and Qwen3.6-35B-A3B (UD-Q4_K_XL, Unsloth Studio) and Qwen3.8-Flash-Next Gyro-S (Strata, the main model since 2026-10-24), with method and caveats.
 ---
 
 # Benchmarks
@@ -71,13 +71,13 @@ prompt speed is tokens / `e2e_ttft`, because its stream opens before the prompt 
 | Prompt t/s, d0 / 8K / 32K | 118 / 113 / 57 | **813 / 710 / 517** | 289 / 279 / 287 |
 | Generation t/s, d0 / 8K / 32K | 19 / 20 / 8 | **58 / 42 / 33** | 29 / 30 / 29 |
 | First token, 34.8K prompt | 662 s | **67 s** | 121 s |
-| Hermes "capital of Nepal", 1st / 2nd | 132 s / 9 s | **31 s / 4 s** | 58 s / 55 s |
+| Hermes "capital of Nepal", 1st / 2nd | 132 s / 9 s | **31 s / 4 s** | 58 s / 55 s (5-6 s from the 2nd after the fix below) |
 
 - The 35B-A3B on Unsloth is fastest on every row. Strata is 2-3x faster than the 27B and
   runs a far larger model, and its speed does not fall with context (29 t/s at 32K vs 33 for
   the 35B-A3B), but it reads prompts at about a third of the 35B-A3B's speed.
 - Strata did not reuse Hermes's ~14K-token prompt between questions (55 s the second time;
-  Unsloth's llama-server: 4-9 s).
+  Unsloth's llama-server: 4-9 s). Fixed on 2026-10-24, see below.
 - Quality is still not compared.
 
 ### Strata setup notes (v0.2.2, engine 0.1.47-metal)
@@ -90,6 +90,31 @@ prompt speed is tokens / `e2e_ttft`, because its stream opens before the prompt 
   start it with `STRATA_ALLOWED_HOSTS=host.docker.internal,host.docker.internal:8080` in the
   environment of `strata launch` (`--set` puts it in the engine's environment, not the server's).
 - Unsloth must be stopped while Strata runs (~33 GB + ~25 GB does not fit in 48 GB).
+
+## Strata as the main model (2026-10-24)
+
+Charles: Strata's Qwen3.8-Flash-Next should be the main model, since a 125B model is smarter
+than the 35B-A3B (3B active) and the 27B. `scripts/start-strata.sh` now starts it and points
+Hermes and Open WebUI at it; `scripts/start-unsloth.sh` switches back to the faster 35B-A3B.
+
+Why Hermes's second question took 55 s: Strata keeps one cached prompt and reuses it only
+when the new prompt starts with the whole cached one. Changing one sentence at the end of a
+10K-token system prompt made it read all 10K again (41 s), where llama-server rewinds to a
+checkpoint. Hermes's requests were byte-identical between runs, but after each answer Hermes
+sends a 345-token request to name the session, and that replaced the cached 13.5K-token
+prompt. `--parallel 2` did not help (still one cached prompt, and the expert arena shrank from
+19.7 to 14.3 GB). The fix is in Hermes: `auxiliary.title_generation.model_upgrade_enabled
+false` keeps its instant title and skips that request (`start-strata.sh` sets it).
+
+| Hermes "capital of Nepal" on Strata | 1st question | following questions |
+|---|---|---|
+| before (2026-10-23, Chrome closed, 22.7 GB arena) | 58 s | 55 s |
+| after, Chrome open (7.5-10.5 GB arena) | 79-90 s | **5-6 s** |
+
+The expert arena is sized from the memory free when Strata starts: 22.7 GB with Chrome
+closed, 5-10 GB with Chrome open (8 GB) or right after Unsloth stopped. A small arena means
+more experts read from the SSD: prompts at 160-180 t/s instead of ~280. Start Strata with
+Chrome closed for the full speed; `start-strata.sh` warns when the arena is under 15 GB.
 
 ## 256K context (35B-A3B, 2026-10-23)
 

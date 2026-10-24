@@ -71,6 +71,29 @@ def check_unsloth() -> Check:
     return Check("unsloth", True, f"{model}  {rss_kb / 2**20:.1f} GB")
 
 
+def check_strata() -> Check:
+    port = load_env().get("STRATA_PORT", "8080")
+    code, body = _http(f"http://127.0.0.1:{port}/v1/models")
+    if code != 200:
+        return Check("strata", False, f"not running (:{port})")
+    models = json.loads(body).get("data", [])
+    model = models[0]["id"].removeprefix("qwen3.8-").replace("-gyro-gyro-", " gyro-") if models else "no model"
+    rss_kb = 0
+    for line in _run(["ps", "-axo", "rss=,command="]).splitlines():
+        if "/components/engine/" in line and "strata" in line:
+            rss_kb += int(line.split(None, 1)[0])
+    return Check("strata", True, f"{model}  64K ctx  {rss_kb / 2**20:.1f} GB")
+
+
+def check_engine() -> Check:
+    """The model server: Strata (the main one) or Unsloth Studio; only one fits in memory."""
+    strata = check_strata()
+    if strata.ok:
+        return strata
+    unsloth = check_unsloth()
+    return unsloth if unsloth.ok else Check("model", False, "strata and unsloth stopped")
+
+
 def check_open_webui() -> Check:
     code, _ = _http("http://localhost:3000/health")
     return Check("open-webui", code == 200, ":3000" if code == 200 else "down")
@@ -79,7 +102,7 @@ def check_open_webui() -> Check:
 def check_hermes() -> Check:
     code, _ = _http("http://localhost:9119/")
     up = code in (200, 302)
-    return Check("hermes", up, ":9119  local qwen" if up else "down")
+    return Check("hermes", up, ":9119  local model" if up else "down")
 
 
 def check_gws() -> Check:
@@ -100,7 +123,7 @@ def check_memory() -> Check:
     return Check("memory", total > 0, f"{used / 2**30:.1f} / {total / 2**30:.0f} GB used")
 
 
-CHECKS = [check_colima, check_unsloth, check_open_webui, check_hermes, check_gws, check_memory]
+CHECKS = [check_colima, check_engine, check_open_webui, check_hermes, check_gws, check_memory]
 
 
 def run_all() -> list[Check]:

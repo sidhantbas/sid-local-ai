@@ -327,3 +327,22 @@ docker exec hermes hermes config set model.base_url http://host.docker.internal:
 Results and setup problems: [benchmarks/README.md](../benchmarks/README.md). Strata stays
 installed (models in `~/.local/share/strata/Strata-data`, 54 GB); remove that folder,
 `~/.local/share/strata` and `~/.local/bin/strata` to uninstall.
+
+## 17. Strata as the main model (2026-10-24)
+
+Charles: "Strata qwen3.8-flash-next should be your main drive". Hermes's 55 s second
+question came from its session-title request evicting Strata's single cached prompt
+(details: [benchmarks/README.md](../benchmarks/README.md)).
+
+```sh
+docker exec hermes hermes config set auxiliary.title_generation.model_upgrade_enabled false
+./scripts/start-strata.sh     # new: stops Unsloth, starts Gyro-S, points Hermes at :8080
+./scripts/start-unsloth.sh    # now also stops Strata and sets Hermes's base_url back to :8890
+```
+
+Open WebUI's saved connection got Strata as a second entry, as in section 8: container
+stopped, data backed up with `docker cp`, then `openai.api_base_urls` +=
+`http://host.docker.internal:8080/v1` and `openai.api_keys` += `none` in `webui.db` (run with
+the open-webui image and the volume mounted). Verified from inside the container: the model
+is listed and a chat returned "open webui can reach strata". `sid` menu item 1 now starts
+Colima, Open WebUI, Hermes, then Strata; item 7 stops both model servers.

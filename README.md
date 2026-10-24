@@ -11,7 +11,8 @@ Every command used to set this machine up is recorded in
 ## Quick start
 
 ```sh
-./scripts/start-unsloth.sh      # start Unsloth Studio + Qwen3.6-35B-A3B -> :8890 (add 27b for Qwen3.8-27B)
+./scripts/start-strata.sh       # start Strata + Qwen3.8-Flash-Next Gyro-S -> :8080 (the main model; close Chrome first)
+./scripts/start-unsloth.sh      # or: Unsloth Studio + Qwen3.6-35B-A3B -> :8890, faster (add 27b for Qwen3.8-27B)
 ./scripts/bench-unsloth.sh --engine <label>   # llama-benchy benchmark -> benchmarks/
 ./scripts/start-colima.sh       # start the Docker runtime (4 GB VM)
 ./scripts/start-open-webui.sh   # start Open WebUI -> http://localhost:3000
@@ -20,6 +21,7 @@ Every command used to set this machine up is recorded in
 ./scripts/stop-hermes.sh        # stop Hermes Agent (data is kept)
 ./scripts/stop-open-webui.sh    # stop Open WebUI (data is kept)
 ./scripts/stop-colima.sh        # stop the Docker runtime
+./scripts/stop-strata.sh        # stop Strata (frees the model's memory)
 ./scripts/stop-unsloth.sh       # stop Unsloth Studio (frees the model's memory)
 ```
 
@@ -48,11 +50,12 @@ cli/        sid CLI (hacker launcher + double-clap listener)
 - [x] Colima Docker runtime, 4 GB RAM (raised from 2 GB for Hermes, OK from Charles)
 - [x] Open WebUI in Docker
 - [x] Unsloth Studio + `qwen3.8-27b-q4-k-xl` (default since 2026-10-23: Qwen3.6-35B-A3B, see [benchmarks](benchmarks/README.md))
-- [x] Open WebUI connected to the local model (Unsloth port 8890)
+- [x] Strata + Qwen3.8-Flash-Next Gyro-S, the main model since 2026-10-24 (Charles)
+- [x] Open WebUI connected to the local models (Strata port 8080, Unsloth port 8890)
 - [x] Hermes Agent (docker compose, local Qwen)
 - [x] uv + bun installed locally
 - [x] gws CLI: 3 profiles (one per Gmail account), tested with Gmail / Calendar / Tasks
 - [x] HyperFrames skills installed via bun
 - [ ] AGENTS.md copied from the original
-- [x] Start/stop scripts for every component (Colima, Open WebUI, Unsloth, Hermes)
+- [x] Start/stop scripts for every component (Colima, Open WebUI, Strata, Unsloth, Hermes)
 - [x] `sid` CLI with double-clap launcher (LaunchAgent)

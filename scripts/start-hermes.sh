@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Start Hermes Agent (Docker, on Colima) with its dashboard at http://localhost:9119.
-# Uses the local Qwen model via Unsloth Studio, so start-unsloth.sh should be running.
+# Uses the local model via Strata (start-strata.sh) or Unsloth Studio (start-unsloth.sh);
+# whichever start script ran last points Hermes at its server.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -8,8 +9,9 @@ cd "$(dirname "$0")/.."
 docker volume create sid-local-ai_hermes-data >/dev/null
 docker compose --env-file .env -f docker/docker-compose.yml up -d hermes
 
-if ! curl -fsS "http://127.0.0.1:${UNSLOTH_PORT:-8890}/api/health" >/dev/null 2>&1; then
-  echo "Note: Unsloth Studio is not running; Hermes needs it (./scripts/start-unsloth.sh)." >&2
+if ! curl -fsS "http://127.0.0.1:${STRATA_PORT:-8080}/v1/models" >/dev/null 2>&1 &&
+   ! curl -fsS "http://127.0.0.1:${UNSLOTH_PORT:-8890}/api/health" >/dev/null 2>&1; then
+  echo "Note: no model server is running; Hermes needs one (./scripts/start-strata.sh)." >&2
 fi
 
 echo "Waiting for the Hermes dashboard..."

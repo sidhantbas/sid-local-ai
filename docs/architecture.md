@@ -4,12 +4,17 @@
 
 ```
 macOS host (Apple Silicon, 48 GB)
-├── Unsloth Studio (native)  ── serves Qwen3.6-35B-A3B UD-Q4_K_XL on 127.0.0.1:8890/v1
+├── Strata (native, main)    ── serves Qwen3.8-Flash-Next Gyro-S on 127.0.0.1:8080/v1
+├── Unsloth Studio (native)  ── or Qwen3.6-35B-A3B UD-Q4_K_XL on 127.0.0.1:8890/v1
 ├── sid CLI (native)         ── launcher/menu over scripts/; clap listener via launchd
 └── Colima VM (VZ, 4 CPU, 4 GB RAM, Docker runtime)
-    ├── Open WebUI     ── talks to Unsloth via host.docker.internal:8890/v1
-    └── Hermes Agent   ── dashboard :9119; model via host.docker.internal:8890/v1
+    ├── Open WebUI     ── both servers via host.docker.internal:8080/v1 and :8890/v1
+    └── Hermes Agent   ── dashboard :9119; model via whichever server started last
 ```
+
+Only one model server runs at a time (both together do not fit in 48 GB):
+`start-strata.sh` stops Unsloth, `start-unsloth.sh` stops Strata, and each points Hermes at
+itself.
 
 The model runs natively on the host so it can use the Mac's unified memory
 directly; Colima only needs enough RAM for the lightweight containers.
@@ -20,7 +25,8 @@ directly; Colima only needs enough RAM for the lightweight containers.
 |---------------|------------------|------|-------------|
 | Colima        | macOS (VZ VM)    | -    | running     |
 | Open WebUI    | Docker (Colima)  | 3000 | running     |
-| Unsloth Studio| macOS native     | 8890 | running     |
+| Strata        | macOS native     | 8080 | running (main) |
+| Unsloth Studio| macOS native     | 8890 | stopped (alternative) |
 | Hermes Agent  | Docker (Colima)  | 9119 | running     |
 | sid CLI       | macOS (launchd)  | -    | installed   |
 
@@ -47,7 +53,24 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Host access from the container verified: `host.docker.internal` -> 192.168.5.2
 - Memory: ~1.0 GB idle out of Colima's 4 GB
 
-## Unsloth Studio
+## Strata (main model since 2026-10-24)
+
+- Strata v0.2.2 (Terminal and Metal engine 0.1.47) in `~/.local/share/strata`, CLI
+  `~/.local/bin/strata`; install steps in [setup-log.md](setup-log.md) section 16
+- Model: Qwen3.8-Flash-Next Gyro-S (125B mixture of experts, 58.5 GB file), id
+  `qwen3.8-flash-next-gyro-gyro-s`; Charles's choice for the main model (smarter than the
+  35B-A3B and the 27B)
+- Started by `scripts/start-strata.sh`: 64K context, one slot, vision off, streaming mode
+  (`STRATA_METAL_STREAM=1`: the most-used experts in an in-memory arena, the rest read from
+  the SSD), `STRATA_ALLOWED_HOSTS=host.docker.internal,...` so the containers are not refused
+- Speed: ~280 t/s prompt and ~29 t/s generation with Chrome closed (22.7 GB arena); slower
+  with less free memory at start. Figures: [benchmarks/README.md](../benchmarks/README.md)
+- API: OpenAI-compatible at `http://127.0.0.1:8080/v1`, no key (local access only)
+- Memory: ~25-33 GB, depending on the arena
+- One cached prompt: a request that does not start with the cached prompt replaces it, so
+  Hermes's session-title request is turned off (see Hermes below)
+
+## Unsloth Studio (the fast alternative)
 
 - Native macOS install in `~/.unsloth/studio`; CLI `~/.local/bin/unsloth`
 - Started by `scripts/start-unsloth.sh` (`unsloth studio run`), logs in `logs/unsloth.log`
@@ -67,7 +90,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Unsloth listens on 127.0.0.1 only, but Colima still forwards
   `host.docker.internal:8890` from containers to it, so it isn't exposed to the LAN
 
-## Open WebUI ↔ Unsloth connection
+## Open WebUI connections
 
 - Fresh installs: `OPENAI_API_BASE_URL` / `OPENAI_API_KEY` in `docker-compose.yml`,
   filled from `.env` (`--env-file .env` in the scripts)
@@ -76,6 +99,10 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `openai.api_keys` in `webui.db`) was updated to point at Unsloth
 - Verified: using the saved URL and key from inside the container, `/v1/models`
   lists Qwen and a chat completion returns a reply
+- 2026-10-24: Strata added the same way as a second connection
+  (`http://host.docker.internal:8080/v1`, key `none`); the compose file now lists both
+  (`OPENAI_API_BASE_URLS` / `OPENAI_API_KEYS`). Open WebUI shows the models of whichever
+  server is running.
 
 ## Hermes Agent
 
@@ -85,10 +112,12 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Data: Docker named volume `sid-local-ai_hermes-data` (config, sessions, skills,
   memories). Not a `~/.hermes` bind mount, because Hermes warns SQLite on virtiofs
   bind mounts can corrupt. The older native install in `~/.hermes` (June) is untouched.
-- Model: `model.provider=custom`, `model.base_url=http://host.docker.internal:8890/v1`,
-  `model.default=unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (must match the model Unsloth has loaded;
-  `docker exec hermes hermes config set model.default <id>` after switching),
-  `model.context_length=65536`. Hermes refuses models with less than 64K context.
+- Model: `model.provider=custom`, `model.base_url=http://host.docker.internal:8080/v1`,
+  `model.default=qwen3.8-flash-next-gyro-gyro-s` (Strata), `model.context_length=65536`.
+  `start-unsloth.sh` sets `:8890/v1` and `unsloth/Qwen3.6-35B-A3B-MTP-GGUF` instead.
+  Hermes refuses models with less than 64K context.
+- `auxiliary.title_generation.model_upgrade_enabled=false`: Hermes keeps its instant session
+  title instead of asking the model, because that request evicts Strata's cached prompt
 - Google: Hermes's built-in `google-workspace` skill, logged in as sidhantbastola7 only
   (token `/opt/data/google_token.json` in the volume, mode 600; full Gmail / Calendar / Drive /
   Docs / Sheets scopes, read-only contacts). Separate from the host's `gws` profiles, whose
@@ -99,7 +128,8 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `HERMES_DASHBOARD_USER` / `HERMES_DASHBOARD_PASSWORD` from `.env`
 - Memory: ~430 MB idle, capped at 2 GB (`mem_limit`). Browser tools would need more.
 - Speed: Hermes sends a ~14K-token system prompt (tools, skills). "What is the capital of
-  Nepal?": 132 s on the 27B, 31 s on the 35B-A3B; 9 s / 4 s once the prompt is cached
+  Nepal?": 132 s on the 27B, 31 s on the 35B-A3B, 58-90 s on Strata; 9 s / 4 s / 5-6 s once
+  the prompt is cached
 
 ## sid CLI
 
