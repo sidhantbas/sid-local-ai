@@ -96,7 +96,8 @@ Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/sk
 - [ ] (M) P1 Phase 2: daily plan from the model + 3 calendars + mail, proposed each morning for approval (Hermes cron)
 - [x] (S) P1 Choose the check-in channel: Telegram on Sid's iPhone first (A), then a HumanLoop web app served by the Mac over Tailscale (B); native app only if needed (C) (Sid, 2026-10-24)
 - [x] (S) P1 `scripts/hermes-telegram.sh <user id>`: token from the clipboard into Hermes's own `.env`, only Sid allowed, this chat = HumanLoop (channel prompt), messages sent while the Mac is off delivered on start; `inbox.md` for quick captures (2026-10-24)
-- [ ] (XS) P1 Sid creates the bot (@BotFather), gets the user id (@userinfobot), runs the script and says hi
+- [x] (XS) P1 Sid creates the bot @sid_humanloop_bot, user id from @userinfobot, script run; Hermes connected to Telegram (polling) (2026-10-24)
+- [ ] (XS) P2 Rotate the bot token (it was pasted into a chat; BotFather `/mybots` -> API Token -> Revoke), then rerun `scripts/hermes-telegram.sh 8547315541`
 - [ ] (S) P1 Voice notes: local speech-to-text (faster-whisper in Hermes, model `base`), so voice stays on the Mac
 - [ ] (L) P2 Mobile B: HumanLoop web app on the iPhone home screen, served by the Mac over Tailscale: offline capture and check-ins queued on the phone, synced to `~/humanloop`, web push; iOS Shortcut in the share sheet for WhatsApp messages
 - [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
