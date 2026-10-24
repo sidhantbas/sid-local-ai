@@ -106,9 +106,11 @@ directly; Colima only needs enough RAM for the lightweight containers.
 
 ## Hermes Agent
 
-- Image `nousresearch/hermes-agent:latest` (digest at install:
-  `sha256:7a69201726bc64db2072a1371557137c23312d29705cda2b8ea2a0214a50a4cf`), service
-  `hermes` in `docker/docker-compose.yml`, command `gateway run`
+- Image `sid-local-ai/hermes:stt`, built by compose from `docker/hermes.Dockerfile`: the
+  pinned `nousresearch/hermes-agent` image (digest
+  `sha256:7a69201726bc64db2072a1371557137c23312d29705cda2b8ea2a0214a50a4cf`, installed
+  2026-10-21) plus faster-whisper for local voice notes. Service `hermes` in
+  `docker/docker-compose.yml`, command `gateway run`
 - Data: Docker named volume `sid-local-ai_hermes-data` (config, sessions, skills,
   memories). Not a `~/.hermes` bind mount, because Hermes warns SQLite on virtiofs
   bind mounts can corrupt. The older native install in `~/.hermes` (June) is untouched.
@@ -170,3 +172,6 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `drop_pending_on_cold_boot: false`: messages sent while the Mac is off (Telegram keeps them
   ~24 h) are answered when Hermes starts. Messages pass through Telegram's servers; the
   planned web app (TODO W8, mobile B) keeps phone ↔ Mac traffic private over Tailscale.
+- Voice notes are transcribed in Hermes by faster-whisper (`stt.provider: local`, model
+  `base`, cached in the volume via `HF_HOME=/opt/data/.cache/huggingface`): the audio never
+  leaves the Mac. ~2 s for a short note.

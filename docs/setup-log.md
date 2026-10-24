@@ -408,3 +408,23 @@ Telegram.
 The script's two config writes were first tried on a copy of config.yaml
 (`HERMES_HOME=/tmp/hh`): both append under `platforms.telegram`, the chat id as a string key,
 comments kept. Voice notes need faster-whisper in the Hermes venv (not installed yet).
+
+## 21. Voice notes, transcribed locally (2026-10-24)
+
+The Hermes image ships without faster-whisper and its venv belongs to root, so a package
+installed in the running container would be lost on the next recreate. Instead
+`docker/hermes.Dockerfile` adds it on top of the pinned image, at the versions in Hermes's
+`uv.lock` (faster-whisper 1.2.1, ctranslate2 4.8.1, onnxruntime 1.29.0, av 18.1.0,
+tokenizers 0.23.1, huggingface-hub 1.24.0; uv 0.12.1 copied in).
+
+```sh
+docker compose --env-file .env -f docker/docker-compose.yml build hermes
+docker compose --env-file .env -f docker/docker-compose.yml up -d hermes
+docker exec hermes hermes config set stt.provider local   # "not a recognized key" warning, but Hermes's _get_provider() reads it
+docker exec hermes hermes config set stt.local.model base
+docker restart hermes
+```
+
+Test: `say` → AIFF → Ogg/Opus (Telegram's voice format) → `transcribe_audio()`: "To do,
+email my supervisor about the dissertation extension before Friday." 12 s the first time
+(142 MB model download into the volume), 2 s after. Hermes uses ~0.5 of its 2 GB.

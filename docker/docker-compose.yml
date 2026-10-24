@@ -21,7 +21,11 @@ services:
     restart: unless-stopped
 
   hermes:
-    image: nousresearch/hermes-agent:latest
+    # the pinned Hermes image plus faster-whisper for local voice-note transcription
+    build:
+      context: .
+      dockerfile: hermes.Dockerfile
+    image: sid-local-ai/hermes:stt
     container_name: hermes
     command: ["gateway", "run"]
     ports:
@@ -37,6 +41,8 @@ services:
       - ${HOME}/humanloop:/opt/data/humanloop
     environment:
       - HERMES_DASHBOARD=1
+      # Whisper model cache in the data volume, so it downloads once
+      - HF_HOME=/opt/data/.cache/huggingface
       - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=${HERMES_DASHBOARD_USER:-sid}
       - HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=${HERMES_DASHBOARD_PASSWORD:?set in .env}
     extra_hosts:
