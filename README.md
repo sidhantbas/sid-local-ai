@@ -17,7 +17,8 @@ Every command used to set this machine up is recorded in
 ./scripts/start-colima.sh       # start the Docker runtime (4 GB VM)
 ./scripts/start-open-webui.sh   # start Open WebUI -> http://localhost:3000
 ./scripts/start-hermes.sh       # start Hermes Agent -> dashboard http://localhost:9119
-./scripts/install-hermes-skills.sh   # copy hermes/skills/ (google-accounts) into Hermes
+./scripts/install-hermes-skills.sh   # copy hermes/skills/ (google-accounts, humanloop) into Hermes
+./scripts/humanloop-init.sh    # create HumanLoop's life model in ~/humanloop (never overwrites)
 ./scripts/status.sh             # show what's running
 ./scripts/stop-hermes.sh        # stop Hermes Agent (data is kept)
 ./scripts/stop-open-webui.sh    # stop Open WebUI (data is kept)
@@ -42,7 +43,7 @@ Google Workspace (one profile per Gmail account):
 docs/       architecture + setup log
 scripts/    start / stop / status scripts
 docker/     docker-compose files (Open WebUI, Hermes Agent)
-hermes/     Hermes skills kept in the repo (google-accounts); scripts/install-hermes-skills.sh copies them in
+hermes/     Hermes skills kept in the repo (google-accounts, humanloop); scripts/install-hermes-skills.sh copies them in
 config/     non-secret configuration notes
 cli/        sid CLI (hacker launcher + double-clap listener)
 ```

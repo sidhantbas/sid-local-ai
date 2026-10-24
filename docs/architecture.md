@@ -147,3 +147,19 @@ directly; Colima only needs enough RAM for the lightweight containers.
   which opens Ghostty full screen with `cli/assets/ghostty-hacker.conf`
 - No audio is stored; detection uses per-block peak/RMS against a noise floor
 - Details: [cli/README.md](../cli/README.md)
+
+## HumanLoop (2026-10-24)
+
+- Hermes, on the local model, is the orchestrator. The `humanloop` skill
+  (`hermes/skills/humanloop/`, copied in by `scripts/install-hermes-skills.sh`) holds the rules
+  and the onboarding interview (`references/onboarding.md`).
+- Life model: Markdown in `~/humanloop/` on the Mac (created by `scripts/humanloop-init.sh`,
+  mode 700, not in git), bind-mounted into Hermes at `/opt/data/humanloop`. Plain files, not
+  SQLite, because SQLite on virtiofs can corrupt. `model/` holds goals, projects, commitments,
+  routines, preferences and `proposed.md` (waiting for approval); `onboarding.md` tracks the
+  interview; `decisions.md` logs decisions.
+- One fact per line: `- [verified|declared|inferred] text · src: ... · id: x-001`. Verified
+  facts come from connected sources (the three Google accounts via `gacct`), declared ones
+  from Sid, inferred ones from Hermes and only with Sid's approval.
+- `sid` menu item 9 opens an interactive Hermes chat with `humanloop` and `google-accounts`
+  loaded and the terminal tool only.

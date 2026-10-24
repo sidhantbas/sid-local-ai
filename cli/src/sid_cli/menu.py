@@ -22,6 +22,12 @@ CHECK_MAIL = [
     "List each unread email as one line: account, sender, subject, and a few words on what it needs.",
 ]
 
+# HumanLoop: interactive Hermes chat with the life-model skill and the Google accounts
+HUMANLOOP = [
+    "docker", "exec", "-it", "hermes", "hermes", "chat",
+    "-s", "humanloop", "-s", "google-accounts", "-t", "terminal",
+]
+
 ITEMS = [
     ("1", "start stack", "colima -> open-webui -> hermes -> strata"),
     ("2", "talk to hermes", "agent chat on the local model"),
@@ -31,6 +37,7 @@ ITEMS = [
     ("6", "gws check", "gmail / calendar / tasks, 3 profiles"),
     ("7", "shut down stack", "hermes, open-webui, strata/unsloth (frees ~25-33 GB)"),
     ("8", "check mail", "hermes reads unread gmail, all accounts"),
+    ("9", "humanloop", "life model + onboarding (say: start onboarding)"),
     ("q", "exit to shell", ""),
 ]
 
@@ -81,6 +88,8 @@ def loop(console: Console) -> None:
             run_scripts(console, STOP_ORDER)
         elif choice == "8":
             subprocess.call(CHECK_MAIL)
+        elif choice == "9":
+            subprocess.call(HUMANLOOP)
         else:
             console.print(f"  ?? unknown command: {choice}", style="red")
         console.print()

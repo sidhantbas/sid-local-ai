@@ -8,7 +8,7 @@ description: Task ledger for the local AI stack. Open work as small units with s
 
 # TODO
 
-**Next:** Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
+**Next:** Sid does the HumanLoop onboarding interview (W8); Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
 
 States: `[ ]` not started · `[.]` doing · `[~]` deferred or blocked (reason given) · `[x]` done · `[-]` cancelled or superseded.
 Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two levels. Items are never deleted.
@@ -86,3 +86,16 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 - [x] (S) P1 Make Strata the main model: `scripts/start-strata.sh` / `stop-strata.sh` (each start script stops the other server and points Hermes at itself), `sid` start stack and status, Open WebUI's second connection (Sid, 2026-10-24)
 - [ ] (XS) P1 Tell Charles: Strata is the main model, the Hermes cache fix, and that Strata is faster with Chrome closed (arena sized at start)
 - [ ] (S) P2 Ask Strata (Niko1221) whether its prompt cache can keep more than one prompt or rewind to a checkpoint, like llama-server's `--ctx-checkpoints`
+
+## W8 — HumanLoop: local AI as the orchestrator (P1, Sid 2026-10-24)
+
+Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/skills/`) holds the rules, and the life model is Markdown in `~/humanloop/` (mounted into Hermes, outside git). Facts are tagged `[verified]` / `[declared]` / `[inferred]`; nothing enters the model without Sid's yes.
+
+- [x] (S) P1 Phase 1 base: `~/humanloop` mounted into Hermes, `scripts/humanloop-init.sh`, `humanloop` skill with the onboarding interview, `sid` menu item 9 (2026-10-24)
+- [ ] (M) P1 Sid does the onboarding interview (`sid` → 9 → "start onboarding", ~20-30 min, can pause)
+- [ ] (M) P1 Phase 2: daily plan from the model + 3 calendars + mail, proposed each morning for approval (Hermes cron)
+- [ ] (S) P1 Choose the check-in channel (Telegram on the phone, macOS notification + terminal, or the Hermes dashboard)
+- [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
+- [ ] (M) P2 Phase 4: evening reflection, patterns from outcomes, spoken briefings (`say`), coaching tone from preferences.md
+- [ ] (M) P2 Phase 5: versioned workflows (repeatable processes with verification and permissions), more connectors (tasks, documents)
+- [ ] (XS) P2 Ask Charles: is "HumanLoop" the final name (W6)?

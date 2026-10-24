@@ -32,6 +32,9 @@ services:
       # (model.provider=custom -> Strata at host.docker.internal:8080/v1, or Unsloth at
       # :8890/v1; set by scripts/start-strata.sh and start-unsloth.sh).
       - hermes-data:/opt/data
+      # HumanLoop's life model: plain Markdown (no SQLite), on the Mac so Sid can read and
+      # edit it in VS Code; outside the repo so personal data never reaches git
+      - ${HOME}/humanloop:/opt/data/humanloop
     environment:
       - HERMES_DASHBOARD=1
       - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=${HERMES_DASHBOARD_USER:-sid}

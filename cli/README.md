@@ -27,7 +27,8 @@ sid clap daemon     # the listener itself (run by launchd)
 ```
 
 Menu: `1` start stack, `2` talk to Hermes, `3` Open WebUI, `4` Hermes dashboard,
-`5` status, `6` gws check, `7` shut down stack, `8` check mail (Hermes, unread Gmail in every signed-in account), `q` exit to shell.
+`5` status, `6` gws check, `7` shut down stack, `8` check mail (Hermes, unread Gmail in every signed-in account), `9` HumanLoop (life model
+and onboarding interview), `q` exit to shell.
 `SID_NO_ANIM=1 sid` skips the animations.
 
 ## Double clap

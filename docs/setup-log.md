@@ -374,3 +374,20 @@ other two as not signed in, and Hermes answered "check unread email in all my ac
 Then Sid signed in sibastola6ucl and disisidstudio. `gacct list`: all 3 signed in; each
 reads Gmail and Calendar. "Check unread email in all my Google accounts": 2 tool calls,
 165 s on Strata, 20 unread per account listed under one heading per account.
+
+## 19. HumanLoop phase 1 (2026-10-24)
+
+Sid's idea: HumanLoop, a local-first personal intelligence agent, with the local AI as the
+orchestrator. Phase 1 is the life model and the onboarding interview.
+
+```sh
+mkdir -p ~/humanloop        # Colima mounts the home folder (virtiofs), so containers can write here
+# docker-compose.yml, hermes: - ${HOME}/humanloop:/opt/data/humanloop
+docker compose --env-file .env -f docker/docker-compose.yml up -d hermes   # recreate; data volume kept
+./scripts/humanloop-init.sh          # empty model files, never overwrites
+./scripts/install-hermes-skills.sh   # humanloop + google-accounts
+```
+
+Checked: Hermes (uid 10000) can append to files the Mac created, and its config and Google
+logins survived the recreate. "What do you know about me so far?" read all files, reported
+an empty model and offered the interview (2 tool calls, 60 s on Strata).
