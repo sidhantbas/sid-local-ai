@@ -50,6 +50,9 @@ new onboarding.md "# Onboarding
 - [ ] 4 Commitments
 - [ ] 5 Routines
 - [ ] 6 How HumanLoop should work"
+new inbox.md "# Inbox
+
+Quick captures from the phone, newest day last; sorted items get a ✓."
 new decisions.md "# Decisions
 
 Important decisions and why, newest first."

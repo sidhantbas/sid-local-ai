@@ -29,6 +29,7 @@ Plain Markdown in `/opt/data/humanloop/` (Sid reads and edits it on the Mac in V
 | `model/routines.md` | sleep, work blocks, energy over the day, habits |
 | `model/preferences.md` | how Sid likes to work and how HumanLoop should behave |
 | `model/proposed.md` | changes waiting for Sid's approval |
+| `inbox.md` | quick captures from the phone, not yet sorted into the model |
 | `onboarding.md` | which interview sections are done |
 | `decisions.md` | important decisions and why |
 
@@ -65,6 +66,13 @@ Every fact is one line, under a `## Section` heading of its file:
 
 - **Onboarding interview**: when Sid asks to start or resume onboarding, or `onboarding.md`
   has sections not done, follow `references/onboarding.md`.
+- **Quick capture** (phone: "remember", "todo", "idea", a forwarded message, a voice note):
+  append one line to `inbox.md` under today's `## <date>` heading, like
+  `- 14:05 todo: email the supervisor about the extension · src: telegram`, and confirm in one
+  line. No approval needed: the inbox is not the model. If it clearly changes a fact in the
+  model, also propose that change.
+- **Sort the inbox** (when Sid asks, or during the daily plan): turn each item into a
+  proposed model line, a task for the plan, or nothing; mark sorted items `✓`.
 - **What do you know about me?**: summarise the model files by section, marking anything
   `[inferred]` or still in `proposed.md`.
 - **Correct something**: find the line by id or text, propose the edit, apply after yes.

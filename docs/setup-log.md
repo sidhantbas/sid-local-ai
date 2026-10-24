@@ -391,3 +391,20 @@ docker compose --env-file .env -f docker/docker-compose.yml up -d hermes   # rec
 Checked: Hermes (uid 10000) can append to files the Mac created, and its config and Google
 logins survived the recreate. "What do you know about me so far?" read all files, reported
 an empty model and offered the interview (2 tool calls, 60 s on Strata).
+
+## 20. HumanLoop on the iPhone: Telegram first (2026-10-24)
+
+Sid's mobile spec: a field companion for capture, check-ins and actionable notifications,
+working even when the Mac is off. Plan: A) Telegram bot through Hermes's gateway now;
+B) a HumanLoop web app on the home screen, served by the Mac over Tailscale, for offline
+capture and private sync; C) a native app only if A and B fall short. Sid chose iPhone and
+Telegram.
+
+```sh
+# Sid: @BotFather -> /newbot -> copy the token; @userinfobot -> user id
+./scripts/hermes-telegram.sh <user id>   # token from clipboard -> /opt/data/.env, clipboard cleared
+```
+
+The script's two config writes were first tried on a copy of config.yaml
+(`HERMES_HOME=/tmp/hh`): both append under `platforms.telegram`, the chat id as a string key,
+comments kept. Voice notes need faster-whisper in the Hermes venv (not installed yet).

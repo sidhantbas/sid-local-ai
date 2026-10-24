@@ -163,3 +163,10 @@ directly; Colima only needs enough RAM for the lightweight containers.
   from Sid, inferred ones from Hermes and only with Sid's approval.
 - `sid` menu item 9 opens an interactive Hermes chat with `humanloop` and `google-accounts`
   loaded and the terminal tool only.
+- Phone (Sid's iPhone): a Telegram bot through Hermes's gateway, set up by
+  `scripts/hermes-telegram.sh`. The token lives in Hermes's `.env` in its volume (mode 600);
+  `TELEGRAM_ALLOWED_USERS` holds only Sid's id (Hermes denies everyone else by default). A
+  channel prompt for Sid's chat makes it HumanLoop; quick captures go to `inbox.md`.
+  `drop_pending_on_cold_boot: false`: messages sent while the Mac is off (Telegram keeps them
+  ~24 h) are answered when Hermes starts. Messages pass through Telegram's servers; the
+  planned web app (TODO W8, mobile B) keeps phone ↔ Mac traffic private over Tailscale.

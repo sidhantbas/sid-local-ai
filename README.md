@@ -19,6 +19,7 @@ Every command used to set this machine up is recorded in
 ./scripts/start-hermes.sh       # start Hermes Agent -> dashboard http://localhost:9119
 ./scripts/install-hermes-skills.sh   # copy hermes/skills/ (google-accounts, humanloop) into Hermes
 ./scripts/humanloop-init.sh    # create HumanLoop's life model in ~/humanloop (never overwrites)
+./scripts/hermes-telegram.sh <user id>   # HumanLoop on the phone: Telegram bot, token from the clipboard
 ./scripts/status.sh             # show what's running
 ./scripts/stop-hermes.sh        # stop Hermes Agent (data is kept)
 ./scripts/stop-open-webui.sh    # stop Open WebUI (data is kept)

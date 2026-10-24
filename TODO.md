@@ -94,7 +94,11 @@ Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/sk
 - [x] (S) P1 Phase 1 base: `~/humanloop` mounted into Hermes, `scripts/humanloop-init.sh`, `humanloop` skill with the onboarding interview, `sid` menu item 9 (2026-10-24)
 - [ ] (M) P1 Sid does the onboarding interview (`sid` → 9 → "start onboarding", ~20-30 min, can pause)
 - [ ] (M) P1 Phase 2: daily plan from the model + 3 calendars + mail, proposed each morning for approval (Hermes cron)
-- [ ] (S) P1 Choose the check-in channel (Telegram on the phone, macOS notification + terminal, or the Hermes dashboard)
+- [x] (S) P1 Choose the check-in channel: Telegram on Sid's iPhone first (A), then a HumanLoop web app served by the Mac over Tailscale (B); native app only if needed (C) (Sid, 2026-10-24)
+- [x] (S) P1 `scripts/hermes-telegram.sh <user id>`: token from the clipboard into Hermes's own `.env`, only Sid allowed, this chat = HumanLoop (channel prompt), messages sent while the Mac is off delivered on start; `inbox.md` for quick captures (2026-10-24)
+- [ ] (XS) P1 Sid creates the bot (@BotFather), gets the user id (@userinfobot), runs the script and says hi
+- [ ] (S) P1 Voice notes: local speech-to-text (faster-whisper in Hermes, model `base`), so voice stays on the Mac
+- [ ] (L) P2 Mobile B: HumanLoop web app on the iPhone home screen, served by the Mac over Tailscale: offline capture and check-ins queued on the phone, synced to `~/humanloop`, web push; iOS Shortcut in the share sheet for WhatsApp messages
 - [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
 - [ ] (M) P2 Phase 4: evening reflection, patterns from outcomes, spoken briefings (`say`), coaching tone from preferences.md
 - [ ] (M) P2 Phase 5: versioned workflows (repeatable processes with verification and permissions), more connectors (tasks, documents)
