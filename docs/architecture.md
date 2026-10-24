@@ -118,12 +118,18 @@ directly; Colima only needs enough RAM for the lightweight containers.
   Hermes refuses models with less than 64K context.
 - `auxiliary.title_generation.model_upgrade_enabled=false`: Hermes keeps its instant session
   title instead of asking the model, because that request evicts Strata's cached prompt
-- Google: Hermes's built-in `google-workspace` skill, logged in as sidhantbastola7 only
-  (token `/opt/data/google_token.json` in the volume, mode 600; full Gmail / Calendar / Drive /
-  Docs / Sheets scopes, read-only contacts). Separate from the host's `gws` profiles, whose
-  credentials stay in the macOS keychain. One-shot runs need `-s google-workspace -t terminal`:
-  in `-q` mode Hermes blocks `execute_code`, and with the full toolset it wanders (10+ min).
-  `sid` menu item 8 runs the mail check this way (~50 s).
+- Google: one Hermes for all three accounts. Each account has a folder
+  `/opt/data/google-accounts/<account>/` (mode 700) with its own `google_token.json` and
+  `google_client_secret.json` (full Gmail / Calendar / Drive / Docs / Sheets scopes, read-only
+  contacts). The repo's `google-accounts` skill (`hermes/skills/`, copied in by
+  `scripts/install-hermes-skills.sh`) gives Hermes `gacct <account|all> <service> ...`, which
+  runs the built-in `google-workspace` skill's `google_api.py` with `HERMES_HOME` set to that
+  folder. `/opt/data/google_token.json` is a link to the sidhantbastola7 login, so the built-in
+  skill alone still uses the main account. Separate from the host's `gws` profiles (same OAuth
+  client), whose credentials stay in the macOS keychain.
+- One-shot runs need `-s google-accounts -t terminal`: in `-q` mode Hermes blocks
+  `execute_code`, and with the full toolset it wanders (10+ min). `sid` menu item 8 runs the
+  mail check for all accounts this way.
 - Dashboard: http://localhost:9119 (published on 127.0.0.1 only), login form with
   `HERMES_DASHBOARD_USER` / `HERMES_DASHBOARD_PASSWORD` from `.env`
 - Memory: ~430 MB idle, capped at 2 GB (`mem_limit`). Browser tools would need more.

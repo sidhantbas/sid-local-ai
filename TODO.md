@@ -8,7 +8,7 @@ description: Task ledger for the local AI stack. Open work as small units with s
 
 # TODO
 
-**Next:** Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
+**Next:** Sid signs in the two other Google accounts for Hermes (W3b) and logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
 
 States: `[ ]` not started · `[.]` doing · `[~]` deferred or blocked (reason given) · `[x]` done · `[-]` cancelled or superseded.
 Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two levels. Items are never deleted.
@@ -54,7 +54,9 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 - [x] (S) P1 Hermes `google-workspace` skill logged in as sidhantbastola7 (full scopes, Sid's choice over a read-only bridge); token mode 600 (2026-10-23)
 - [x] (S) P1 "Check my unread emails" works one-shot in 51 s with `-s google-workspace -t terminal --reasoning low`; full toolset ran 10+ min (2026-10-23)
 - [x] (XS) P1 `sid` menu item 8: check mail
-- [ ] (S) P2 Other two accounts (sibastola6ucl, disisidstudio): Hermes profiles with their own Google login
+- [-] (S) P2 Other two accounts (sibastola6ucl, disisidstudio): Hermes profiles with their own Google login; superseded: one Hermes, one login folder per account (Sid, 2026-10-24: profiles would be hard to follow)
+- [x] (S) P1 `google-accounts` skill (`hermes/skills/`, installed by `scripts/install-hermes-skills.sh`): `gacct <account|all> ...` runs google-workspace as one account or all; logins in `/opt/data/google-accounts/<account>/`; main login moved there (2026-10-24)
+- [.] (XS) P1 Sid signs in sibastola6ucl and disisidstudio (link from `setup.py --auth-url` with that account's folder as HERMES_HOME)
 - [ ] (XS) P2 Enable Drive / Docs / Sheets / People APIs in the GCP project if Hermes should use them
 
 ## W4 — CLI tools installed and authenticated (P1, Charles 2026-10-22)

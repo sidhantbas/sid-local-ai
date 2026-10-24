@@ -346,3 +346,27 @@ stopped, data backed up with `docker cp`, then `openai.api_base_urls` +=
 the open-webui image and the volume mounted). Verified from inside the container: the model
 is listed and a chat returned "open webui can reach strata". `sid` menu item 1 now starts
 Colima, Open WebUI, Hermes, then Strata; item 7 stops both model servers.
+
+## 18. One Hermes, three Google accounts (2026-10-24)
+
+Hermes's `google-workspace` skill keeps one login per Hermes home. Instead of three Hermes
+profiles (hard to follow), each account gets a login folder and the skill is run with
+`HERMES_HOME` pointing at it. All three `gws` profiles use the same OAuth client, so the
+same client secret is copied into each folder.
+
+```sh
+# in the container, as the hermes user, umask 077
+mkdir -p /opt/data/google-accounts/{sidhantbastola7,sibastola6ucl,disisidstudio}
+cp /opt/data/google_client_secret.json /opt/data/google-accounts/<each>/
+mv /opt/data/google_token.json /opt/data/google-accounts/sidhantbastola7/
+ln -s /opt/data/google-accounts/sidhantbastola7/google_token.json /opt/data/google_token.json
+./scripts/install-hermes-skills.sh      # on the Mac: copies hermes/skills/google-accounts in
+# sign in another account (Sid opens the link, picks the account, pastes the redirect URL back):
+HERMES_HOME=/opt/data/google-accounts/<account> /opt/hermes/.venv/bin/python \
+  /opt/data/skills/productivity/google-workspace/scripts/setup.py --auth-url
+HERMES_HOME=/opt/data/google-accounts/<account> ... setup.py --auth-code '<redirect URL>'
+```
+
+Verified: sidhantbastola7 works from its folder (20 unread found), `gacct list` shows the
+other two as not signed in, and Hermes answered "check unread email in all my accounts" with
+4 tool calls in 117 s on Strata.

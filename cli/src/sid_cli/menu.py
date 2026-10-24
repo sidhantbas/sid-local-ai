@@ -17,9 +17,9 @@ STOP_ORDER = ["stop-hermes.sh", "stop-open-webui.sh", "stop-strata.sh", "stop-un
 # 10+ min of the full toolset, where -q mode blocks execute_code and the agent wanders)
 CHECK_MAIL = [
     "docker", "exec", "-it", "hermes", "hermes", "chat", "--oneshot",
-    "-s", "google-workspace", "-t", "terminal", "--reasoning", "low",
-    "-q", "Use the google-workspace skill's google_api.py gmail search for is:unread (max 20). "
-    "List each unread email as one line: sender, subject, and a few words on what it needs.",
+    "-s", "google-accounts", "-t", "terminal", "--reasoning", "low",
+    "-q", "Check unread email in all my Google accounts (gacct all gmail search is:unread --max 20). "
+    "List each unread email as one line: account, sender, subject, and a few words on what it needs.",
 ]
 
 ITEMS = [
@@ -30,7 +30,7 @@ ITEMS = [
     ("5", "status", "re-run live checks"),
     ("6", "gws check", "gmail / calendar / tasks, 3 profiles"),
     ("7", "shut down stack", "hermes, open-webui, strata/unsloth (frees ~25-33 GB)"),
-    ("8", "check mail", "hermes reads unread gmail (sidhantbastola7)"),
+    ("8", "check mail", "hermes reads unread gmail, all accounts"),
     ("q", "exit to shell", ""),
 ]
 

@@ -1,0 +1,38 @@
+#!/bin/sh
+# Run the google-workspace skill's google_api.py as one of Sid's Google accounts, or as each.
+#
+#   gacct list                          the accounts and whether each is signed in
+#   gacct <account> <service> ...       one account, e.g. gacct sibastola6ucl gmail search is:unread --max 20
+#   gacct all <service> ...             every signed-in account, each output under "=== <account>"
+#
+# Each account is a folder in /opt/data/google-accounts/ holding its own google_token.json and
+# google_client_secret.json; google_api.py reads them from HERMES_HOME.
+set -eu
+BASE=/opt/data/google-accounts
+API=/opt/data/skills/productivity/google-workspace/scripts/google_api.py
+PY=/opt/hermes/.venv/bin/python
+
+usage() { echo "usage: gacct list | gacct <account|all> <gmail|calendar|drive|contacts|sheets|docs> ..." >&2; exit 2; }
+connected() { for d in "$BASE"/*/; do [ -f "${d}google_token.json" ] && basename "$d"; done; return 0; }
+
+[ $# -ge 1 ] || usage
+case "$1" in
+  list)
+    for d in "$BASE"/*/; do
+      a=$(basename "$d")
+      if [ -f "${d}google_token.json" ]; then echo "$a  signed in"; else echo "$a  not signed in"; fi
+    done ;;
+  all)
+    shift; [ $# -ge 1 ] || usage
+    for a in $(connected); do
+      echo "=== $a"
+      HERMES_HOME="$BASE/$a" "$PY" "$API" "$@" || echo "(failed for $a)"
+    done ;;
+  */*|.*) echo "gacct: not an account name: $1" >&2; exit 2 ;;
+  *)
+    a=$1; shift; [ $# -ge 1 ] || usage
+    if [ ! -f "$BASE/$a/google_token.json" ]; then
+      echo "gacct: $a is not signed in; signed in: $(connected | tr '\n' ' ')" >&2; exit 1
+    fi
+    HERMES_HOME="$BASE/$a" exec "$PY" "$API" "$@" ;;
+esac
