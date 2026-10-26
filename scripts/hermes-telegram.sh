@@ -44,7 +44,11 @@ H "platforms.telegram.channel_prompts.${USER_ID}" "This chat is HumanLoop on Sid
 Load the humanloop skill (and google-accounts for calendars or mail) before answering anything \
 about Sid's goals, projects, plans, schedule, tasks or check-ins. Phone replies: a few short \
 lines, the next action first. Quick captures (remember, todo, idea, a forwarded message) go to \
-inbox.md as described in the skill; confirm in one line."
+inbox.md as described in the skill; confirm in one line. Questions about lectures, modules or \
+anything Sid is studying (\"I don't get...\", \"explain...\", \"card 3\", \"brief\"): load the \
+study-coach skill and follow it."
+# send lecture cards (study-coach) from the mounted ~/brain/study
+H gateway.media_delivery_allow_dirs '["/opt/data/study"]'
 
 docker restart hermes >/dev/null
 echo "Hermes restarted. Open Telegram, message @${bot} and say hi."

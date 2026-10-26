@@ -39,6 +39,9 @@ services:
       # HumanLoop's life model: plain Markdown (no SQLite), on the Mac so Sid can read and
       # edit it in VS Code; outside the repo so personal data never reaches git
       - ${HOME}/humanloop:/opt/data/humanloop
+      # Lecture briefs, visual cards and question logs (study-coach skill); plain files in
+      # ~/brain/study, so Sid sees Hermes's question log in VS Code
+      - ${HOME}/brain/study:/opt/data/study
     environment:
       - HERMES_DASHBOARD=1
       # Whisper model cache in the data volume, so it downloads once

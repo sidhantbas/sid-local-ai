@@ -20,6 +20,7 @@ Every command used to set this machine up is recorded in
 ./scripts/install-hermes-skills.sh   # copy hermes/skills/ (google-accounts, humanloop) into Hermes
 ./scripts/humanloop-init.sh    # create HumanLoop's life model in ~/humanloop (never overwrites)
 ./scripts/hermes-telegram.sh <user id>   # HumanLoop on the phone: Telegram bot, token from the clipboard
+./scripts/hermes-study-brief.sh   # weekday 07:30 lecture brief on Telegram (from ~/brain/study)
 ./scripts/install-keep-awake.sh   # stay awake while a model serves (lid close still sleeps)
 ./scripts/status.sh             # show what's running
 ./scripts/stop-hermes.sh        # stop Hermes Agent (data is kept)

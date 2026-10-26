@@ -176,6 +176,22 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `base`, cached in the volume via `HF_HOME=/opt/data/.cache/huggingface`): the audio never
   leaves the Mac. ~2 s for a short note.
 
+## Study coach (2026-10-26)
+
+- Lecture companion on the same Telegram chat. `~/brain/study` (Sid's brain repo) is bind-mounted
+  into Hermes at `/opt/data/study`: per-lecture `brief.md`, `slides.txt`, visual cards
+  (`cards/*.png`) and `questions.md`, plus `schedule.json` from the timetable export.
+- The `study-coach` skill (`hermes/skills/study-coach/`) answers lecture questions in three steps:
+  `coach.py context "<question>"` (brief, matching slide lines, card paths), `coach.py log` (appends
+  to the lecture's `questions.md`), then a reply of at most 120 words: answer, how to think about
+  it, metaphor, engineer's view, check question, and the matching card as a `MEDIA:` line. On the
+  35B-A3B: 17-25 s per question once the prompt is cached.
+- `gateway.media_delivery_allow_dirs: [/opt/data/study]` lets Hermes send the cards;
+  `timezone: Europe/London` so cron times are UK time. The Telegram channel prompt routes study
+  questions to the skill (set by `scripts/hermes-telegram.sh`).
+- Morning brief: `scripts/hermes-study-brief.sh` adds the cron job `study-brief` (weekdays 07:30,
+  `--no-agent`): it runs `study/tools/today.py` and delivers its text; silent on days without classes.
+
 ## Keep-awake agent
 
 - LaunchAgent `com.sidlocalai.keepawake` runs `scripts/keep-awake.sh` (installed by

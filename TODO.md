@@ -103,6 +103,8 @@ Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/sk
 - [x] (XS) P1 Keep answering while the laptop is open: LaunchAgent `com.sidlocalai.keepawake` (`scripts/install-keep-awake.sh`) holds `caffeinate -i -w <model pid>` while Strata or llama-server runs; display sleep and lid-close sleep unchanged (Sid, 2026-10-24)
 - [ ] (L) P2 Mobile B: HumanLoop web app on the iPhone home screen, served by the Mac over Tailscale: offline capture and check-ins queued on the phone, synced to `~/humanloop`, web push; iOS Shortcut in the share sheet for WhatsApp messages
 - [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
+- [x] (M) P1 Study coach: `~/brain/study` mounted at `/opt/data/study`, `study-coach` skill (lecture Q&A with metaphors, cards via `MEDIA:`, question log), channel prompt routes study questions (2026-10-26)
+- [ ] (XS) P1 Sid runs `scripts/hermes-study-brief.sh` to add the weekday 07:30 lecture brief (cron), then `docker exec hermes hermes cron run study-brief` to test
 - [ ] (M) P2 Phase 4: evening reflection, patterns from outcomes, spoken briefings (`say`), coaching tone from preferences.md
 - [ ] (M) P2 Phase 5: versioned workflows (repeatable processes with verification and permissions), more connectors (tasks, documents)
 - [ ] (XS) P2 Ask Charles: is "HumanLoop" the final name (W6)?
