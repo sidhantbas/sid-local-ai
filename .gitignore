@@ -1,9 +1,11 @@
 .DS_Store
 .env
 *.env.local
-# gws / Google OAuth credentials must never be committed
-config/**/credentials*.json
-config/**/token*.json
+# Google OAuth credentials and tokens must never be committed (gws keeps its own in
+# ~/.config/gws, Hermes in its data volume)
+**/credentials*.json
+**/client_secret*.json
+**/*token*.json
 logs/
 cli/.venv/
 __pycache__/

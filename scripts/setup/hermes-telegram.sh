@@ -3,7 +3,7 @@
 #
 #   1. Telegram: @BotFather -> /newbot -> copy the token it gives you (Cmd+C)
 #   2. Telegram: @userinfobot -> it replies with your numeric user id
-#   3. ./scripts/hermes-telegram.sh <your user id>
+#   3. ./scripts/setup/hermes-telegram.sh <your user id>
 #
 # The token is read from the clipboard, so it never shows on screen or in shell history,
 # and the clipboard is cleared afterwards. It is stored in Hermes's own .env in its data

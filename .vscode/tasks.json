@@ -1,0 +1,84 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "stack: status",
+      "type": "shell",
+      "command": "./scripts/stack/status.sh",
+      "detail": "What is running (Colima, containers, Unsloth, Strata)",
+      "problemMatcher": [],
+      "group": "test"
+    },
+    {
+      "label": "stack: start all (Strata)",
+      "type": "shell",
+      "command": "./scripts/stack/start-colima.sh && ./scripts/stack/start-open-webui.sh && ./scripts/stack/start-hermes.sh && ./scripts/stack/start-strata.sh",
+      "detail": "Same order as sid menu item 1",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "stack: stop all",
+      "type": "shell",
+      "command": "./scripts/stack/stop-hermes.sh; ./scripts/stack/stop-open-webui.sh; ./scripts/stack/stop-strata.sh; ./scripts/stack/stop-unsloth.sh",
+      "detail": "Frees the model's memory; data is kept",
+      "problemMatcher": []
+    },
+    {
+      "label": "model: switch to Strata (Gyro-S)",
+      "type": "shell",
+      "command": "./scripts/stack/start-strata.sh",
+      "detail": "Main model; stops Unsloth; close Chrome first",
+      "problemMatcher": []
+    },
+    {
+      "label": "model: switch to Unsloth (35B-A3B)",
+      "type": "shell",
+      "command": "./scripts/stack/start-unsloth.sh",
+      "detail": "Fast model; stops Strata",
+      "problemMatcher": []
+    },
+    {
+      "label": "bench: llama-benchy (engine)",
+      "type": "shell",
+      "command": "./scripts/bench/llama-benchy.sh --engine ${input:benchLabel}",
+      "detail": "Writes benchmarks/<date>-engine-<label>/",
+      "problemMatcher": []
+    },
+    {
+      "label": "hermes: install skills",
+      "type": "shell",
+      "command": "./scripts/setup/install-hermes-skills.sh",
+      "detail": "Copy hermes/skills/ into the container",
+      "problemMatcher": []
+    },
+    {
+      "label": "hermes: rebuild image",
+      "type": "shell",
+      "command": "docker compose --env-file .env -f docker/docker-compose.yml build hermes && docker compose --env-file .env -f docker/docker-compose.yml up -d hermes",
+      "detail": "After editing hermes/Dockerfile",
+      "problemMatcher": []
+    },
+    {
+      "label": "hermes: logs",
+      "type": "shell",
+      "command": "docker logs -f --since 10m hermes",
+      "detail": "Follow Hermes's log",
+      "problemMatcher": []
+    },
+    {
+      "label": "humanloop: open life model",
+      "type": "shell",
+      "command": "code ~/humanloop",
+      "detail": "Sid's life model (outside git)",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "benchLabel",
+      "type": "promptString",
+      "description": "Run label, e.g. 35b-a3b-ctx64k"
+    }
+  ]
+}

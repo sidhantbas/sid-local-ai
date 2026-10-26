@@ -60,7 +60,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - Model: Qwen3.8-Flash-Next Gyro-S (125B mixture of experts, 58.5 GB file), id
   `qwen3.8-flash-next-gyro-gyro-s`; Charles's choice for the main model (smarter than the
   35B-A3B and the 27B)
-- Started by `scripts/start-strata.sh`: 64K context, one slot, vision off, streaming mode
+- Started by `scripts/stack/start-strata.sh`: 64K context, one slot, vision off, streaming mode
   (`STRATA_METAL_STREAM=1`: the most-used experts in an in-memory arena, the rest read from
   the SSD), `STRATA_ALLOWED_HOSTS=host.docker.internal,...` so the containers are not refused
 - Speed: ~280 t/s prompt and ~29 t/s generation with Chrome closed (22.7 GB arena); slower
@@ -73,7 +73,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
 ## Unsloth Studio (the fast alternative)
 
 - Native macOS install in `~/.unsloth/studio`; CLI `~/.local/bin/unsloth`
-- Started by `scripts/start-unsloth.sh` (`unsloth studio run`), logs in `logs/unsloth.log`
+- Started by `scripts/stack/start-unsloth.sh` (`unsloth studio run`), logs in `logs/unsloth.log`
 - Models (one loaded at a time, both `UD-Q4_K_XL` from the Hugging Face cache):
   - default since 2026-10-23: `unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (mixture of experts,
     3B active, 22.85 GB): ~813 t/s prompt, ~58 t/s generation
@@ -106,7 +106,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
 
 ## Hermes Agent
 
-- Image `sid-local-ai/hermes:stt`, built by compose from `docker/hermes.Dockerfile`: the
+- Image `sid-local-ai/hermes:stt`, built by compose from `hermes/Dockerfile`: the
   pinned `nousresearch/hermes-agent` image (digest
   `sha256:7a69201726bc64db2072a1371557137c23312d29705cda2b8ea2a0214a50a4cf`, installed
   2026-10-21) plus faster-whisper for local voice notes. Service `hermes` in
@@ -124,7 +124,7 @@ directly; Colima only needs enough RAM for the lightweight containers.
   `/opt/data/google-accounts/<account>/` (mode 700) with its own `google_token.json` and
   `google_client_secret.json` (full Gmail / Calendar / Drive / Docs / Sheets scopes, read-only
   contacts). The repo's `google-accounts` skill (`hermes/skills/`, copied in by
-  `scripts/install-hermes-skills.sh`) gives Hermes `gacct <account|all> <service> ...`, which
+  `scripts/setup/install-hermes-skills.sh`) gives Hermes `gacct <account|all> <service> ...`, which
   runs the built-in `google-workspace` skill's `google_api.py` with `HERMES_HOME` set to that
   folder. `/opt/data/google_token.json` is a link to the sidhantbastola7 login, so the built-in
   skill alone still uses the main account. Separate from the host's `gws` profiles (same OAuth
@@ -150,52 +150,15 @@ directly; Colima only needs enough RAM for the lightweight containers.
 - No audio is stored; detection uses per-block peak/RMS against a noise floor
 - Details: [cli/README.md](../cli/README.md)
 
-## HumanLoop (2026-10-24)
+## HumanLoop and the study coach
 
-- Hermes, on the local model, is the orchestrator. The `humanloop` skill
-  (`hermes/skills/humanloop/`, copied in by `scripts/install-hermes-skills.sh`) holds the rules
-  and the onboarding interview (`references/onboarding.md`).
-- Life model: Markdown in `~/humanloop/` on the Mac (created by `scripts/humanloop-init.sh`,
-  mode 700, not in git), bind-mounted into Hermes at `/opt/data/humanloop`. Plain files, not
-  SQLite, because SQLite on virtiofs can corrupt. `model/` holds goals, projects, commitments,
-  routines, preferences and `proposed.md` (waiting for approval); `onboarding.md` tracks the
-  interview; `decisions.md` logs decisions.
-- One fact per line: `- [verified|declared|inferred] text · src: ... · id: x-001`. Verified
-  facts come from connected sources (the three Google accounts via `gacct`), declared ones
-  from Sid, inferred ones from Hermes and only with Sid's approval.
-- `sid` menu item 9 opens an interactive Hermes chat with `humanloop` and `google-accounts`
-  loaded and the terminal tool only.
-- Phone (Sid's iPhone): a Telegram bot through Hermes's gateway, set up by
-  `scripts/hermes-telegram.sh`. The token lives in Hermes's `.env` in its volume (mode 600);
-  `TELEGRAM_ALLOWED_USERS` holds only Sid's id (Hermes denies everyone else by default). A
-  channel prompt for Sid's chat makes it HumanLoop; quick captures go to `inbox.md`.
-  `drop_pending_on_cold_boot: false`: messages sent while the Mac is off (Telegram keeps them
-  ~24 h) are answered when Hermes starts. Messages pass through Telegram's servers; the
-  planned web app (TODO W8, mobile B) keeps phone ↔ Mac traffic private over Tailscale.
-- Voice notes are transcribed in Hermes by faster-whisper (`stt.provider: local`, model
-  `base`, cached in the volume via `HF_HOME=/opt/data/.cache/huggingface`): the audio never
-  leaves the Mac. ~2 s for a short note.
-
-## Study coach (2026-10-26)
-
-- Lecture companion on the same Telegram chat. `~/brain/study` (Sid's brain repo) is bind-mounted
-  into Hermes at `/opt/data/study`: per-lecture `brief.md`, `slides.txt`, visual cards
-  (`cards/*.png`) and `questions.md`, plus `schedule.json` from the timetable export.
-- The `study-coach` skill (`hermes/skills/study-coach/`) answers lecture questions in three steps:
-  `coach.py context "<question>"` (brief, matching slide lines, card paths), `coach.py log` (appends
-  to the lecture's `questions.md`), then a reply of at most 120 words: answer, how to think about
-  it, metaphor, engineer's view, check question, and the matching card as a `MEDIA:` line. On the
-  35B-A3B: 17-25 s per question once the prompt is cached.
-- `gateway.media_delivery_allow_dirs: [/opt/data/study]` lets Hermes send the cards;
-  `timezone: Europe/London` so cron times are UK time. The Telegram channel prompt routes study
-  questions to the skill (set by `scripts/hermes-telegram.sh`).
-- Morning brief: `scripts/hermes-study-brief.sh` adds the cron job `study-brief` (weekdays 07:30,
-  `--no-agent`): it runs `study/tools/today.py` and delivers its text; silent on days without classes.
+Moved to [humanloop.md](humanloop.md): the life model, the Telegram channel, voice notes and
+the study coach, all running on this stack.
 
 ## Keep-awake agent
 
-- LaunchAgent `com.sidlocalai.keepawake` runs `scripts/keep-awake.sh` (installed by
-  `scripts/install-keep-awake.sh`, log `~/Library/Logs/sid-keepawake.log`).
+- LaunchAgent `com.sidlocalai.keepawake` runs `scripts/stack/keep-awake.sh` (installed by
+  `scripts/setup/install-keep-awake.sh`, log `~/Library/Logs/sid-keepawake.log`).
 - While Strata's engine or llama-server runs, it holds `caffeinate -i -w <pid>`: no idle
   sleep, so Hermes and the Telegram bot keep answering. The display still sleeps after
   10 minutes, and closing the lid still sleeps the Mac. When the model stops, the Mac's

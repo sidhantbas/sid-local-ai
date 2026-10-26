@@ -10,8 +10,8 @@ from .paths import SCRIPTS
 from .status import run_all
 
 # Hermes starts before the model so start-strata.sh can point it at Strata
-START_ORDER = ["start-colima.sh", "start-open-webui.sh", "start-hermes.sh", "start-strata.sh"]
-STOP_ORDER = ["stop-hermes.sh", "stop-open-webui.sh", "stop-strata.sh", "stop-unsloth.sh"]
+START_ORDER = ["stack/start-colima.sh", "stack/start-open-webui.sh", "stack/start-hermes.sh", "stack/start-strata.sh"]
+STOP_ORDER = ["stack/stop-hermes.sh", "stack/stop-open-webui.sh", "stack/stop-strata.sh", "stack/stop-unsloth.sh"]
 
 # one-shot Hermes run: skill preloaded, terminal tool only, low reasoning (~50 s instead of
 # 10+ min of the full toolset, where -q mode blocks execute_code and the agent wanders)
@@ -83,7 +83,7 @@ def loop(console: Console) -> None:
         elif choice == "5":
             show_status(console, run_all())
         elif choice == "6":
-            run_scripts(console, ["test-gws.sh"])
+            run_scripts(console, ["google/test-gws.sh"])
         elif choice == "7":
             run_scripts(console, STOP_ORDER)
         elif choice == "8":

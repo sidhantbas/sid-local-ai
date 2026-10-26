@@ -1,0 +1,13 @@
+{
+  // Recommended for this repo; VS Code offers to install them when the folder opens
+  "recommendations": [
+    "ms-python.python",
+    "charliermarsh.ruff",
+    "timonwong.shellcheck",
+    "foxundermoon.shell-format",
+    "ms-azuretools.vscode-containers",
+    "redhat.vscode-yaml",
+    "bierner.markdown-mermaid",
+    "yzhang.markdown-all-in-one"
+  ]
+}

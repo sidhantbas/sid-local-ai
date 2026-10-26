@@ -2,6 +2,13 @@
 
 Every command run to set up this machine, in order.
 
+> **Paths changed on 2026-10-26** (section 23): scripts now live in subfolders. Sections 1-22
+> keep the paths as they were run: `scripts/start-*.sh`, `stop-*.sh`, `status.sh` and
+> `keep-awake.sh` are now in `scripts/stack/`; `install-*.sh`, `hermes-*.sh` and
+> `humanloop-init.sh` in `scripts/setup/`; `gws.sh` and `test-gws.sh` in `scripts/google/`;
+> `bench-unsloth.sh` is `scripts/bench/llama-benchy.sh`; `docker/hermes.Dockerfile` is
+> `hermes/Dockerfile`.
+
 ## 1. Colima (Docker runtime)
 
 Colima 0.10.3 was already installed via Homebrew (`brew install colima`).
@@ -439,3 +446,24 @@ laptop is folded.
 ./scripts/install-keep-awake.sh   # LaunchAgent: caffeinate -i -w <model pid> while a model runs
 pmset -g assertions               # "caffeinate asserting on behalf of Process ID <strata pid>"
 ```
+
+## 23. Repo restructure (2026-10-26)
+
+Sid asked for a cleaner repo before adding Charles as a collaborator.
+
+```sh
+git mv scripts/{start,stop}-*.sh scripts/status.sh scripts/keep-awake.sh scripts/stack/
+git mv scripts/install-*.sh scripts/hermes-*.sh scripts/humanloop-init.sh scripts/setup/
+git mv scripts/gws.sh scripts/test-gws.sh scripts/google/
+git mv scripts/bench-unsloth.sh scripts/bench/llama-benchy.sh
+git mv docker/hermes.Dockerfile hermes/Dockerfile        # compose: build: ../hermes
+git rm config/.gitkeep                                   # empty; .gitignore rules now repo-wide
+./scripts/setup/install-keep-awake.sh                    # LaunchAgent points at the new path
+```
+
+Every script now does `cd "$(dirname "$0")/../.."`; script-to-script calls, the `sid` menu,
+compose, the docs and TODO use the new paths. Added `.env.example`, `.vscode/` (tasks,
+settings, recommended extensions), `docs/humanloop.md` (moved out of architecture.md) and a
+Strata section in `status.sh`. Checked: every script parses, every path `sid` uses exists,
+`status.sh` and `sid status` run, the Hermes image builds from `hermes/` (all layers cached),
+and keep-awake holds its assertion from the new path.

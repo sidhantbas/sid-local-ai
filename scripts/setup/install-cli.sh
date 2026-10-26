@@ -2,11 +2,11 @@
 # Install the `sid` CLI (editable, so repo changes apply immediately) and the
 # clap listener LaunchAgent that starts at login.
 #
-#   ./scripts/install-cli.sh             # CLI + clap listener
-#   ./scripts/install-cli.sh --no-clap   # CLI only
-#   ./scripts/install-cli.sh --uninstall # remove both
+#   ./scripts/setup/install-cli.sh             # CLI + clap listener
+#   ./scripts/setup/install-cli.sh --no-clap   # CLI only
+#   ./scripts/setup/install-cli.sh --uninstall # remove both
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 LABEL="com.sidlocalai.clapd"
 PLIST="${HOME}/Library/LaunchAgents/${LABEL}.plist"

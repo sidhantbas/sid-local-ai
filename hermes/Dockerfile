@@ -1,7 +1,7 @@
 # Hermes Agent plus local speech-to-text (faster-whisper), so HumanLoop's Telegram voice
 # notes are transcribed on the Mac instead of by a cloud service.
 #
-# Built by docker compose (service hermes). The base is pinned to the digest installed on
+# Built by docker compose (service hermes in docker/docker-compose.yml). The base is pinned to the digest installed on
 # 2026-10-21; the packages are pinned to the versions in Hermes's own uv.lock. Packages go
 # into the image, not the running container, so they survive a container recreate. The
 # Whisper model itself downloads on first use into the data volume (HF_HOME in compose).

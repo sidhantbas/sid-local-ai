@@ -4,7 +4,7 @@
 # the job runs study/tools/today.py and delivers its output; on a day without classes it prints
 # nothing, so nothing is sent.
 #
-#   ./scripts/hermes-study-brief.sh [telegram user id]   # default: Sid's id
+#   ./scripts/setup/hermes-study-brief.sh [telegram user id]   # default: Sid's id
 set -euo pipefail
 
 USER_ID="${1:-8547315541}"

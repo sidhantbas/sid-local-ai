@@ -2,8 +2,8 @@
 # Run the Google Workspace CLI (gws) as one of the configured Google accounts.
 # Each profile is named after the Gmail username and has its own config dir.
 #
-#   ./scripts/gws.sh <profile> <gws args...>
-#   ./scripts/gws.sh sidhantbastola7 gmail +triage
+#   ./scripts/google/gws.sh <profile> <gws args...>
+#   ./scripts/google/gws.sh sidhantbastola7 gmail +triage
 set -euo pipefail
 
 PROFILES=(sidhantbastola7 sibastola6ucl disisidstudio)

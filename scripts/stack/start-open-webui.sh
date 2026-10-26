@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Start Open WebUI (Docker, on Colima) at http://localhost:3000.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
-./scripts/start-colima.sh
+./scripts/stack/start-colima.sh
 docker compose --env-file .env -f docker/docker-compose.yml up -d open-webui
 
 echo "Waiting for Open WebUI to become healthy..."

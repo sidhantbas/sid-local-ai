@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Install (or remove) the LaunchAgent that keeps the Mac awake while a model is serving,
-# so HumanLoop answers on Telegram until the lid is closed. See scripts/keep-awake.sh.
+# so HumanLoop answers on Telegram until the lid is closed. See scripts/stack/keep-awake.sh.
 #
-#   ./scripts/install-keep-awake.sh              # install and start (also at every login)
-#   ./scripts/install-keep-awake.sh --uninstall  # remove; the Mac sleeps normally again
+#   ./scripts/setup/install-keep-awake.sh              # install and start (also at every login)
+#   ./scripts/setup/install-keep-awake.sh --uninstall  # remove; the Mac sleeps normally again
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 LABEL="com.sidlocalai.keepawake"
 PLIST="${HOME}/Library/LaunchAgents/${LABEL}.plist"
@@ -26,7 +26,7 @@ cat > "${PLIST}" <<EOF
 <dict>
   <key>Label</key><string>${LABEL}</string>
   <key>ProgramArguments</key>
-  <array><string>/bin/bash</string><string>$(pwd)/scripts/keep-awake.sh</string></array>
+  <array><string>/bin/bash</string><string>$(pwd)/scripts/stack/keep-awake.sh</string></array>
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>StandardOutPath</key><string>${LOG}</string>

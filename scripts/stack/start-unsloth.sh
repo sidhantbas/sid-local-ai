@@ -2,22 +2,22 @@
 # Start Unsloth Studio (native macOS) on port 8890 with a Qwen model loaded,
 # serving an OpenAI-compatible API at http://127.0.0.1:8890/v1.
 #
-#   ./scripts/start-unsloth.sh            # Qwen3.6-35B-A3B (mixture of experts, 3B active; the default)
-#   ./scripts/start-unsloth.sh 27b        # Qwen3.8-27B (dense; ~7x slower prompts, 3x slower answers)
+#   ./scripts/stack/start-unsloth.sh            # Qwen3.6-35B-A3B (mixture of experts, 3B active; the default)
+#   ./scripts/stack/start-unsloth.sh 27b        # Qwen3.8-27B (dense; ~7x slower prompts, 3x slower answers)
 #
 # The default changed from 27b on 2026-10-23 after benchmarks/README.md. Hermes's
 # model.default must name the loaded model (see docs/architecture.md).
-# Since 2026-10-24 the main model is Strata's (./scripts/start-strata.sh); this is the
+# Since 2026-10-24 the main model is Strata's (./scripts/stack/start-strata.sh); this is the
 # fast alternative. Only one fits in 48 GB, so this stops Strata first.
 #
-# To switch models: ./scripts/stop-unsloth.sh, then start with the other one.
-# Context: UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh for the full 256K
+# To switch models: ./scripts/stack/stop-unsloth.sh, then start with the other one.
+# Context: UNSLOTH_CONTEXT=262144 ./scripts/stack/start-unsloth.sh for the full 256K
 # (35B-A3B: ~30 GB instead of ~25 GB; see benchmarks/README.md).
 # If the Hermes container is running, it is pointed at Unsloth with this model and context.
 # Logs: logs/unsloth.log. The API key (label "open-webui") is reused across
 # runs and lives in .env as UNSLOTH_API_KEY.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 PORT="${UNSLOTH_PORT:-8890}"
 CONTEXT="${UNSLOTH_CONTEXT:-65536}"  # tokens, shared by the 4 slots
@@ -34,7 +34,7 @@ if curl -fsS "http://127.0.0.1:${PORT}/api/health" >/dev/null 2>&1; then
   exit 0
 fi
 
-./scripts/stop-strata.sh >/dev/null
+./scripts/stack/stop-strata.sh >/dev/null
 
 mkdir -p logs
 nohup "${UNSLOTH}" studio run \

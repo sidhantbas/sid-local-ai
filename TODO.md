@@ -1,14 +1,14 @@
 ---
 title: sid-local-ai TODO
 created: 2026-10-22
-modified: 2026-10-24
+modified: 2026-10-26
 creator: sidhantbas
 description: Task ledger for the local AI stack. Open work as small units with status, size and priority, grouped by workstream; done items stay in place.
 ---
 
 # TODO
 
-**Next:** Sid does the HumanLoop onboarding interview (W8); Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/start-strata.sh`, close Chrome first); `scripts/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
+**Next:** Sid does the HumanLoop onboarding interview (W8); Sid logs in to `hf` and `cf` (W4); compare answer quality of Strata Gyro-S and the 35B-A3B on real tasks (W1). Main model since 2026-10-24: Strata Qwen3.8-Flash-Next Gyro-S, 64K (`scripts/stack/start-strata.sh`, close Chrome first); `scripts/stack/start-unsloth.sh` switches to the faster Qwen3.6-35B-A3B.
 
 States: `[ ]` not started · `[.]` doing · `[~]` deferred or blocked (reason given) · `[x]` done · `[-]` cancelled or superseded.
 Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two levels. Items are never deleted.
@@ -28,7 +28,7 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 
 ## W1 — Benchmark Unsloth + Qwen3.8 with llama-benchy (P0, Charles 2026-10-22)
 
-- [x] (S) P0 Find llama-benchy, install with `uv tool install` (0.4.0; `scripts/bench-unsloth.sh`, 2026-10-22)
+- [x] (S) P0 Find llama-benchy, install with `uv tool install` (0.4.0; `scripts/bench/llama-benchy.sh`, 2026-10-22)
 - [x] (M) P0 Baseline at 64K context, engine target, depths 0 / 8K / 32K: 27B pp 118 / 113 / 57 t/s, tg 19 / 20 / 8 t/s ([benchmarks](benchmarks/README.md), 2026-10-22; first run invalid, swapping)
 - [x] (M) P0 Qwen3.6-35B-A3B (UD-Q4_K_XL, MTP) downloaded, SHA-256 checked, same benchmark: pp 813 / 710 / 517 t/s, tg 58 / 42 / 33 t/s (2026-10-22)
 - [x] (XS) P0 Default model: Qwen3.6-35B-A3B (Sid, 2026-10-23); `start-unsloth.sh 27b` keeps the 27B
@@ -55,7 +55,7 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 - [x] (S) P1 "Check my unread emails" works one-shot in 51 s with `-s google-workspace -t terminal --reasoning low`; full toolset ran 10+ min (2026-10-23)
 - [x] (XS) P1 `sid` menu item 8: check mail
 - [-] (S) P2 Other two accounts (sibastola6ucl, disisidstudio): Hermes profiles with their own Google login; superseded: one Hermes, one login folder per account (Sid, 2026-10-24: profiles would be hard to follow)
-- [x] (S) P1 `google-accounts` skill (`hermes/skills/`, installed by `scripts/install-hermes-skills.sh`): `gacct <account|all> ...` runs google-workspace as one account or all; logins in `/opt/data/google-accounts/<account>/`; main login moved there (2026-10-24)
+- [x] (S) P1 `google-accounts` skill (`hermes/skills/`, installed by `scripts/setup/install-hermes-skills.sh`): `gacct <account|all> ...` runs google-workspace as one account or all; logins in `/opt/data/google-accounts/<account>/`; main login moved there (2026-10-24)
 - [x] (XS) P1 Sid signs in sibastola6ucl and disisidstudio (link from `setup.py --auth-url` with that account's folder as HERMES_HOME); all 3 read Gmail and Calendar; Hermes lists unread mail from all 3 in one answer (2 tool calls, 165 s on Strata) (2026-10-24)
 - [ ] (XS) P2 Enable Drive / Docs / Sheets / People APIs in the GCP project if Hermes should use them
 
@@ -68,7 +68,9 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 
 ## W5 — VS Code, clean and inspectable (P1, Charles 2026-10-22)
 
-- [ ] (S) P1 VS Code workspace: `.vscode/settings.json`, recommended extensions, tasks for start/stop/status/benchmark
+- [x] (S) P1 VS Code workspace: `.vscode/settings.json`, recommended extensions, tasks for start/stop/status/benchmark, model switch, skills and image (2026-10-26)
+- [x] (S) P1 Repo restructure: `scripts/{stack,setup,bench,google}/`, `hermes/Dockerfile`, `.env.example`, `docs/humanloop.md`, new README (2026-10-26)
+- [ ] (XS) P1 Sid adds Charles as a collaborator on GitHub (Settings → Collaborators)
 - [x] (S) P1 `TODO.md` in Charles's format (this file, 2026-10-22)
 - [ ] (XS) P1 `CHANGELOG.md`, one dated entry per session
 - [ ] (S) P1 AGENTS.md copied from Charles's original; `CLAUDE.md` symlink to it
@@ -83,7 +85,7 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 - [x] (M) P2 Benchmark Strata Gyro-S (streaming, 22.7 GB arena) with the same method: prompt 289 / 279 / 287 t/s, generation 29 t/s at 0 / 8K / 32K; Hermes 58 s / 55 s (no prompt-cache reuse); 35B-A3B on Unsloth stays the default (Sid, 2026-10-23)
 - [x] (XS) P2 Ask Charles whether to keep Strata installed (54 GB on disk) for quality tests: keep it, Strata's Qwen3.8-Flash-Next should be the main model (Charles, 2026-10-24)
 - [x] (S) P1 Find why Hermes's second question took 55 s on Strata: Strata keeps one cached prompt, and Hermes's session-title request replaced it; fixed with `auxiliary.title_generation.model_upgrade_enabled false` (5-6 s now; `--parallel 2` did not help) (Sid, 2026-10-24)
-- [x] (S) P1 Make Strata the main model: `scripts/start-strata.sh` / `stop-strata.sh` (each start script stops the other server and points Hermes at itself), `sid` start stack and status, Open WebUI's second connection (Sid, 2026-10-24)
+- [x] (S) P1 Make Strata the main model: `scripts/stack/start-strata.sh` / `stop-strata.sh` (each start script stops the other server and points Hermes at itself), `sid` start stack and status, Open WebUI's second connection (Sid, 2026-10-24)
 - [ ] (XS) P1 Tell Charles: Strata is the main model, the Hermes cache fix, and that Strata is faster with Chrome closed (arena sized at start)
 - [ ] (S) P2 Ask Strata (Niko1221) whether its prompt cache can keep more than one prompt or rewind to a checkpoint, like llama-server's `--ctx-checkpoints`
 
@@ -91,20 +93,20 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 
 Hermes on the local model is the orchestrator; the `humanloop` skill (`hermes/skills/`) holds the rules, and the life model is Markdown in `~/humanloop/` (mounted into Hermes, outside git). Facts are tagged `[verified]` / `[declared]` / `[inferred]`; nothing enters the model without Sid's yes.
 
-- [x] (S) P1 Phase 1 base: `~/humanloop` mounted into Hermes, `scripts/humanloop-init.sh`, `humanloop` skill with the onboarding interview, `sid` menu item 9 (2026-10-24)
+- [x] (S) P1 Phase 1 base: `~/humanloop` mounted into Hermes, `scripts/setup/humanloop-init.sh`, `humanloop` skill with the onboarding interview, `sid` menu item 9 (2026-10-24)
 - [ ] (M) P1 Sid does the onboarding interview (`sid` → 9 → "start onboarding", ~20-30 min, can pause)
 - [ ] (M) P1 Phase 2: daily plan from the model + 3 calendars + mail, proposed each morning for approval (Hermes cron)
 - [x] (S) P1 Choose the check-in channel: Telegram on Sid's iPhone first (A), then a HumanLoop web app served by the Mac over Tailscale (B); native app only if needed (C) (Sid, 2026-10-24)
-- [x] (S) P1 `scripts/hermes-telegram.sh <user id>`: token from the clipboard into Hermes's own `.env`, only Sid allowed, this chat = HumanLoop (channel prompt), messages sent while the Mac is off delivered on start; `inbox.md` for quick captures (2026-10-24)
+- [x] (S) P1 `scripts/setup/hermes-telegram.sh <user id>`: token from the clipboard into Hermes's own `.env`, only Sid allowed, this chat = HumanLoop (channel prompt), messages sent while the Mac is off delivered on start; `inbox.md` for quick captures (2026-10-24)
 - [x] (XS) P1 Sid creates the bot @sid_humanloop_bot, user id from @userinfobot, script run; Hermes connected to Telegram (polling) (2026-10-24)
-- [ ] (XS) P2 Rotate the bot token (it was pasted into a chat; BotFather `/mybots` -> API Token -> Revoke), then rerun `scripts/hermes-telegram.sh 8547315541`
-- [x] (S) P1 Voice notes: local speech-to-text, faster-whisper 1.2.1 (model `base`, 142 MB in the data volume) baked into `docker/hermes.Dockerfile` on the pinned Hermes image; a test note transcribed correctly in 2 s (12 s first time, with the download) (2026-10-24)
+- [ ] (XS) P2 Rotate the bot token (it was pasted into a chat; BotFather `/mybots` -> API Token -> Revoke), then rerun `scripts/setup/hermes-telegram.sh 8547315541`
+- [x] (S) P1 Voice notes: local speech-to-text, faster-whisper 1.2.1 (model `base`, 142 MB in the data volume) baked into `hermes/Dockerfile` on the pinned Hermes image; a test note transcribed correctly in 2 s (12 s first time, with the download) (2026-10-24)
 - [ ] (XS) P1 Sid sends a real voice note from the iPhone
-- [x] (XS) P1 Keep answering while the laptop is open: LaunchAgent `com.sidlocalai.keepawake` (`scripts/install-keep-awake.sh`) holds `caffeinate -i -w <model pid>` while Strata or llama-server runs; display sleep and lid-close sleep unchanged (Sid, 2026-10-24)
+- [x] (XS) P1 Keep answering while the laptop is open: LaunchAgent `com.sidlocalai.keepawake` (`scripts/setup/install-keep-awake.sh`) holds `caffeinate -i -w <model pid>` while Strata or llama-server runs; display sleep and lid-close sleep unchanged (Sid, 2026-10-24)
 - [ ] (L) P2 Mobile B: HumanLoop web app on the iPhone home screen, served by the Mac over Tailscale: offline capture and check-ins queued on the phone, synced to `~/humanloop`, web push; iOS Shortcut in the share sheet for WhatsApp messages
 - [ ] (M) P1 Phase 3: hourly check-in during active hours: what Sid is doing, what changed, next best action, proposed plan changes
 - [x] (M) P1 Study coach: `~/brain/study` mounted at `/opt/data/study`, `study-coach` skill (lecture Q&A with metaphors, cards via `MEDIA:`, question log), channel prompt routes study questions (2026-10-26)
-- [ ] (XS) P1 Sid runs `scripts/hermes-study-brief.sh` to add the weekday 07:30 lecture brief (cron), then `docker exec hermes hermes cron run study-brief` to test
+- [ ] (XS) P1 Sid runs `scripts/setup/hermes-study-brief.sh` to add the weekday 07:30 lecture brief (cron), then `docker exec hermes hermes cron run study-brief` to test
 - [ ] (M) P2 Phase 4: evening reflection, patterns from outcomes, spoken briefings (`say`), coaching tone from preferences.md
 - [ ] (M) P2 Phase 5: versioned workflows (repeatable processes with verification and permissions), more connectors (tasks, documents)
 - [ ] (XS) P2 Ask Charles: is "HumanLoop" the final name (W6)?

@@ -3,7 +3,7 @@
 # Only creates files that do not exist yet, so it is safe to run again; Sid's data is never
 # overwritten. The data stays outside the repo. Format and rules: hermes/skills/humanloop/.
 #
-#   ./scripts/humanloop-init.sh
+#   ./scripts/setup/humanloop-init.sh
 set -euo pipefail
 
 DIR="${HUMANLOOP_DIR:-${HOME}/humanloop}"

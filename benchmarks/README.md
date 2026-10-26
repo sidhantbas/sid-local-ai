@@ -8,7 +8,7 @@ description: llama-benchy and Hermes timings on the M4 Pro (48 GB) for Qwen3.8-2
 # Benchmarks
 
 Tool: [llama-benchy](https://github.com/eugr/llama-benchy) 0.4.0 (`uv tool install llama-benchy`).
-Script: [`scripts/bench-unsloth.sh`](../scripts/bench-unsloth.sh). Each run folder holds
+Script: [`scripts/bench/llama-benchy.sh`](../scripts/bench/llama-benchy.sh). Each run folder holds
 `results.md` (table), `run.log` (full output) and `environment.txt` (machine, server
 command line, memory before/after).
 
@@ -17,7 +17,7 @@ command line, memory before/after).
 - Models (both UD-Q4_K_XL, 64K context, 4 slots, Unsloth's default MTP + n-gram drafting):
   `unsloth/Qwen3.8-27B-GGUF` (dense, 17.6 GB, tokenizer `Qwen/Qwen3.8-27B`) and
   `unsloth/Qwen3.6-35B-A3B-MTP-GGUF` (mixture of experts, 3B active, 22.9 GB, tokenizer `Qwen/Qwen3.6-35B-A3B`).
-  The script detects the loaded model; switch with `./scripts/start-unsloth.sh [27b|35b-a3b]`.
+  The script detects the loaded model; switch with `./scripts/stack/start-unsloth.sh [27b|35b-a3b]`.
 - Default test: 2048-token prompt, 128 generated tokens, at 0 / 8K / 32K tokens of earlier
   context, 3 runs each, `--no-cache` (no prefix-cache reuse), thinking off.
 - Two targets:
@@ -94,8 +94,8 @@ prompt speed is tokens / `e2e_ttft`, because its stream opens before the prompt 
 ## Strata as the main model (2026-10-24)
 
 Charles: Strata's Qwen3.8-Flash-Next should be the main model, since a 125B model is smarter
-than the 35B-A3B (3B active) and the 27B. `scripts/start-strata.sh` now starts it and points
-Hermes and Open WebUI at it; `scripts/start-unsloth.sh` switches back to the faster 35B-A3B.
+than the 35B-A3B (3B active) and the 27B. `scripts/stack/start-strata.sh` now starts it and points
+Hermes and Open WebUI at it; `scripts/stack/start-unsloth.sh` switches back to the faster 35B-A3B.
 
 Why Hermes's second question took 55 s: Strata keeps one cached prompt and reuses it only
 when the new prompt starts with the whole cached one. Changing one sentence at the end of a
@@ -118,8 +118,8 @@ Chrome closed for the full speed; `start-strata.sh` warns when the arena is unde
 
 ## 256K context (35B-A3B, 2026-10-23)
 
-`UNSLOTH_CONTEXT=262144 ./scripts/start-unsloth.sh`, then
-`./scripts/bench-unsloth.sh --engine 35b-a3b-ctx256k --pp 2048 --tg 128 --depth 0 32768 131072`.
+`UNSLOTH_CONTEXT=262144 ./scripts/stack/start-unsloth.sh`, then
+`./scripts/bench/llama-benchy.sh --engine 35b-a3b-ctx256k --pp 2048 --tg 128 --depth 0 32768 131072`.
 
 | Earlier context | pp t/s | tg t/s | Time to first token |
 |---|---|---|---|

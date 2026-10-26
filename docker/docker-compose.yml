@@ -22,9 +22,7 @@ services:
 
   hermes:
     # the pinned Hermes image plus faster-whisper for local voice-note transcription
-    build:
-      context: .
-      dockerfile: hermes.Dockerfile
+    build: ../hermes          # hermes/Dockerfile
     image: sid-local-ai/hermes:stt
     container_name: hermes
     command: ["gateway", "run"]
@@ -34,7 +32,7 @@ services:
       # Named volume, not a ~/.hermes bind mount: Hermes warns that SQLite on
       # virtiofs (Colima's mount type) can corrupt. Model config lives in here
       # (model.provider=custom -> Strata at host.docker.internal:8080/v1, or Unsloth at
-      # :8890/v1; set by scripts/start-strata.sh and start-unsloth.sh).
+      # :8890/v1; set by scripts/stack/start-strata.sh and start-unsloth.sh).
       - hermes-data:/opt/data
       # HumanLoop's life model: plain Markdown (no SQLite), on the Mac so Sid can read and
       # edit it in VS Code; outside the repo so personal data never reaches git
@@ -57,4 +55,4 @@ volumes:
   open-webui:
   hermes-data:
     name: sid-local-ai_hermes-data
-    external: true   # created by scripts/start-hermes.sh
+    external: true   # created by scripts/stack/start-hermes.sh

@@ -3,17 +3,17 @@
 # Each run gets its own folder in benchmarks/ with the results table, the full log
 # and the server settings it ran against.
 #
-#   ./scripts/bench-unsloth.sh [--engine|--strata] <label> [llama-benchy args]
-#   ./scripts/bench-unsloth.sh ctx64k             # through Unsloth's API (:8890), what apps see
-#   ./scripts/bench-unsloth.sh --engine ctx64k    # straight to Unsloth's llama-server
-#   ./scripts/bench-unsloth.sh --strata gyro-s    # Strata (strata launch) on :8080, for comparison
-#   ./scripts/bench-unsloth.sh smoke --pp 512 --tg 32 --depth 0 --runs 1
+#   ./scripts/bench/llama-benchy.sh [--engine|--strata] <label> [llama-benchy args]
+#   ./scripts/bench/llama-benchy.sh ctx64k             # through Unsloth's API (:8890), what apps see
+#   ./scripts/bench/llama-benchy.sh --engine ctx64k    # straight to Unsloth's llama-server
+#   ./scripts/bench/llama-benchy.sh --strata gyro-s    # Strata (strata launch) on :8080, for comparison
+#   ./scripts/bench/llama-benchy.sh smoke --pp 512 --tg 32 --depth 0 --runs 1
 #
 # Through Unsloth, the stream opens before the prompt is processed, so llama-benchy's
 # pp t/s and ttfr are not meaningful there; use e2e_ttft, or --engine for pp t/s.
 # Thinking is turned off so that generated tokens are answer tokens.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 set -a; . ./.env; set +a
 
 target=unsloth
@@ -21,7 +21,7 @@ case "${1:-}" in
   --engine) target=engine; shift ;;
   --strata) target=strata; shift ;;
 esac
-label="${1:?usage: bench-unsloth.sh [--engine|--strata] <label> [llama-benchy args]}"; shift
+label="${1:?usage: llama-benchy.sh [--engine|--strata] <label> [llama-benchy args]}"; shift
 
 if [ "${target}" = strata ]; then
   base_url="http://127.0.0.1:${STRATA_PORT:-8080}/v1"

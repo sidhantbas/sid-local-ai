@@ -7,9 +7,9 @@ A background listener opens it full screen when you double clap after unlocking.
 ## Install
 
 ```sh
-./scripts/install-cli.sh             # CLI + clap listener (LaunchAgent)
-./scripts/install-cli.sh --no-clap   # CLI only
-./scripts/install-cli.sh --uninstall # remove both
+./scripts/setup/install-cli.sh             # CLI + clap listener (LaunchAgent)
+./scripts/setup/install-cli.sh --no-clap   # CLI only
+./scripts/setup/install-cli.sh --uninstall # remove both
 ```
 
 The CLI is installed editable with `uv tool`, so changes in `cli/src` apply

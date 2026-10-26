@@ -2,10 +2,10 @@
 # Start Strata (native macOS, Metal engine) on port 8080 with Qwen3.8-Flash-Next Gyro-S
 # (125B mixture of experts), serving an OpenAI-compatible API at http://127.0.0.1:8080/v1.
 # The main model since 2026-10-24 (Charles: the bigger model is smarter); for the faster
-# Qwen3.6-35B-A3B use ./scripts/start-unsloth.sh instead. Only one of the two fits in 48 GB,
+# Qwen3.6-35B-A3B use ./scripts/stack/start-unsloth.sh instead. Only one of the two fits in 48 GB,
 # so this stops Unsloth Studio first.
 #
-#   ./scripts/start-strata.sh
+#   ./scripts/stack/start-strata.sh
 #
 # Streaming mode (STRATA_METAL_STREAM=1): the model file is 58.5 GB, so experts that are not
 # in the in-memory arena are read from the SSD. Strata sizes the arena from the memory free at
@@ -13,7 +13,7 @@
 # Install steps: docs/setup-log.md section 16. Engine log: ~/.local/state/strata/launch/.
 # If the Hermes container is running, it is pointed at Strata.
 set -euo pipefail
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 PORT="${STRATA_PORT:-8080}"
 MODEL=qwen3.8-flash-next-gyro-gyro-s
@@ -26,7 +26,7 @@ if curl -fsS "http://127.0.0.1:${PORT}/v1/models" >/dev/null 2>&1; then
 else
   if curl -fsS "http://127.0.0.1:${UNSLOTH_PORT:-8890}/api/health" >/dev/null 2>&1; then
     echo "Stopping Unsloth Studio to free memory..."
-    ./scripts/stop-unsloth.sh
+    ./scripts/stack/stop-unsloth.sh
     sleep 10  # let macOS take its memory back; the arena is sized from what is free
   fi
   echo "Loading Gyro-S (takes about a minute)..."
@@ -40,7 +40,7 @@ else
   arena=$(grep -o 'expert arena [0-9.]* GB' "${LOG}" | tail -1 | grep -o '[0-9.]*' || echo 0)
   echo "Expert arena: ${arena} GB in memory."
   if [ "${arena%.*}" -lt 15 ]; then
-    echo "  Little memory was free; close Chrome and run ./scripts/stop-strata.sh && ./scripts/start-strata.sh for faster answers."
+    echo "  Little memory was free; close Chrome and run ./scripts/stack/stop-strata.sh && ./scripts/stack/start-strata.sh for faster answers."
   fi
 fi
 
