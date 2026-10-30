@@ -9,3 +9,5 @@
 logs/
 cli/.venv/
 __pycache__/
+# map-reduce task folders: renders and assets stay local (docs/mapreduction.md)
+work/

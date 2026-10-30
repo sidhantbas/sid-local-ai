@@ -184,6 +184,7 @@ sid-local-ai/
 ├── docs/
 │   ├── architecture.md      every component, port, setting and why
 │   ├── humanloop.md         HumanLoop design and channels
+│   ├── mapreduction.md      splitting big tasks (video, design, products) across agents
 │   └── setup-log.md         every command run on this machine, in order
 └── .vscode/                 tasks, settings, recommended extensions
 ```

@@ -1,7 +1,8 @@
 ---
 title: sid-local-ai agent and project rules
 description: Canonical instructions for people and coding agents working on sid-local-ai (the local AI stack and HumanLoop). CLAUDE.md is a symbolic link to this file.
-date: 2026-10-29
+created: 2026-10-29
+modified: 2026-10-30
 creator: sidhantbas
 source: Structure from the AGENTS.md of sidhantbas/mission-p (itself merged with Charles Cai's AGENTS.md); rules gathered from this repository's README.md, TODO.md and docs/
 ---
@@ -116,8 +117,10 @@ sid-local-ai/
 ├── docs/
 │   ├── architecture.md      every component, port, setting and why
 │   ├── humanloop.md         HumanLoop design, channels, study coach
+│   ├── mapreduction.md      how to split big tasks (video, design, products) across agents
 │   └── setup-log.md         every command run on this machine, in order
 ├── logs/                    runtime logs (git-ignored)
+├── work/                    one folder per map-reduce task (git-ignored)
 └── .vscode/                 tasks, settings, recommended extensions
 ```
 
@@ -142,6 +145,8 @@ servers), `~/.config/sid-cli/clap.json`, `~/Library/LaunchAgents/com.sidlocalai.
 ## Working rules
 
 - **Session start:** `./scripts/stack/status.sh` (or `sid status`), then read the **Next:** line in `TODO.md`.
+- **Big tasks** (a video, a visual design, a product, or anything with 3 or more independent parts): follow
+  [docs/mapreduction.md](docs/mapreduction.md): plan a contract, map the parts, check each part, then reduce. Work goes in `work/`.
 - **Every command run on the machine** goes into `docs/setup-log.md` as a new numbered section with the date in its heading.
   Never rewrite old sections: they keep paths as they were run (the note at the top maps old paths to new).
 - **Every setting and the reason for it** goes into `docs/architecture.md`; HumanLoop and study-coach changes into
