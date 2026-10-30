@@ -166,6 +166,7 @@ Details in [docs/humanloop.md](docs/humanloop.md); roadmap in [TODO.md](TODO.md)
 ```
 sid-local-ai/
 ├── README.md                you are here
+├── AGENTS.md                rules for people and coding agents (CLAUDE.md links here)
 ├── TODO.md                  task ledger: workstreams, status, size, priority
 ├── .env.example             settings to copy into .env (git-ignored)
 ├── scripts/
@@ -200,6 +201,8 @@ sid-local-ai/
   web app keeps phone-to-Mac traffic private over Tailscale.
 
 ## Working on this repo
+
+The full rules are in [AGENTS.md](AGENTS.md); the short version:
 
 - **Track work in [TODO.md](TODO.md).** States `[ ]` `[.]` `[~]` `[x]` `[-]`, size `(XS)` to `(L)`,
   priority `P0` to `P2`. Items are never deleted, only marked done or superseded.

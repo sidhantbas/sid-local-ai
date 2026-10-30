@@ -1,7 +1,7 @@
 ---
 title: sid-local-ai TODO
 created: 2026-10-22
-modified: 2026-10-26
+modified: 2026-10-29
 creator: sidhantbas
 description: Task ledger for the local AI stack. Open work as small units with status, size and priority, grouped by workstream; done items stay in place.
 ---
@@ -70,10 +70,10 @@ Size `(XS)`–`(L)` after the state; priority `P0` (first) to `P2`. At most two 
 
 - [x] (S) P1 VS Code workspace: `.vscode/settings.json`, recommended extensions, tasks for start/stop/status/benchmark, model switch, skills and image (2026-10-26)
 - [x] (S) P1 Repo restructure: `scripts/{stack,setup,bench,google}/`, `hermes/Dockerfile`, `.env.example`, `docs/humanloop.md`, new README (2026-10-26)
-- [ ] (XS) P1 Sid adds Charles as a collaborator on GitHub (Settings → Collaborators)
+- [x] (XS) P1 Sid adds Charles as a collaborator on GitHub: `charles-cai`, write access, invited and accepted (2026-10-26)
 - [x] (S) P1 `TODO.md` in Charles's format (this file, 2026-10-22)
 - [ ] (XS) P1 `CHANGELOG.md`, one dated entry per session
-- [ ] (S) P1 AGENTS.md copied from Charles's original; `CLAUDE.md` symlink to it
+- [x] (S) P1 `AGENTS.md` in the structure of Mission P's (Charles's rules, adapted to this repo); `CLAUDE.md` is a symlink to it (2026-10-29)
 
 ## W6 — Naming (P2)
 
